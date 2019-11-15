@@ -6,9 +6,14 @@ using User.Domain.Event;
 
 namespace User.Domain
 {
-    public class UserState
+    public class UserState : IState<Guid>
     {
         private readonly Common.User _user;
+
+        public Guid Id => _user.Id;
+
+        public IEnumerable<Phone> Phones => _user.Phones;
+        public IEnumerable<Address> Addresses => _user.Addresses;
 
         public UserState(Common.User user)
         {
@@ -66,5 +71,8 @@ namespace User.Domain
             _user.LastNames = @event.LastNames;
             _user.BirthDay = @event.BirthDay;
         }
+
+        public static explicit operator Common.User(UserState state)
+            => state._user;
     }
 }

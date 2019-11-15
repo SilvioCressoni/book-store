@@ -2,7 +2,7 @@
 
 namespace User.Domain
 {
-    public interface IUserAggregationRoot : IAggregateRoot<UserState>
+    public interface IUserAggregationRoot : IAggregateRoot<UserState, Guid>
     {
         #region Phone
         Result AddPhone(string number);

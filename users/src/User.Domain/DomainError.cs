@@ -33,6 +33,8 @@ namespace User.Domain
             public static ErrorResult InvalidLastNames { get; } = Fail("USR003", "Invalid last names length");
 
             public static ErrorResult InvalidBirthDay { get; } = Fail("USR004", "Invalid birth day");
+
+            public static ErrorResult UserNotFound { get; } = Fail("USR005", "User not found");
         }
     }
 }

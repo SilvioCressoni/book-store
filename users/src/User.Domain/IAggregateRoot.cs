@@ -2,12 +2,10 @@
 
 namespace User.Domain
 {
-    public interface IAggregateRoot<T>
-        where  T : class
+    public interface IAggregateRoot<TState, TId>
+        where TState : IState<TId>
     {
-        DateTime? LastUpdateDate { get; set; }
-
-        T State { get; }
+        TState State { get; }
 
         void Apply<TEvent>(TEvent @event);
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using User.Domain.Event;
 
@@ -21,13 +22,13 @@ namespace User.Domain
                 return PhoneError.InvalidNumber;
             }
 
-            if (State.ContainPhone(number))
+            if (State.Phones.Any(x => x.Number == number))
             {
                 return PhoneError.NumberAlreadyExist;
             }
 
             Apply(new PhoneAddEvent(number));
-            return Result.Ok;
+            return Result.Ok();
         }
 
         public Result RemovePhone(string number)
@@ -37,13 +38,13 @@ namespace User.Domain
                 return PhoneError.InvalidNumber;
             }
 
-            if (!State.ContainPhone(number))
+            if (State.Phones.All(x => x.Number != number))
             {
                 return PhoneError.NumbernotFound;
             }
 
             Apply(new PhoneRemoveEvent(number));
-            return Result.Ok;
+            return Result.Ok();
         }
         #endregion
 
@@ -65,14 +66,13 @@ namespace User.Domain
                 return AddressError.InvalidPostCode;
             }
 
-            if (State.ContainAddress(line, number, postCode))
+            if (State.Addresses.Any(x => x.Line == line && x.Number == number && x.PostCode == postCode))
             {
-                return AddressError.AddressAlreadyExist
-                    ;
+                return AddressError.AddressAlreadyExist;
             }
 
             Apply(new AddressAddEvent(postCode, number, line));
-            return Result.Ok;
+            return Result.Ok();
         }
 
         public Result RemoveAddress(Guid addressId)
@@ -82,13 +82,13 @@ namespace User.Domain
                 return AddressError.InvalidAddressId;
             }
 
-            if (!State.ContainAddress(addressId))
+            if (State.Addresses.All(x => x.Id != addressId))
             {
                 return AddressError.AddressNotFound;
             }
 
             Apply(new AddressRemoveEvent(addressId));
-            return Result.Ok;
+            return Result.Ok();
         }
         #endregion
 
@@ -135,7 +135,7 @@ namespace User.Domain
             }
 
             Apply(new CreateEvent(email, firstName, lastName, birthDay));
-            return Result.Ok;
+            return Result.Ok();
         }
 
         public Result Update(string firstName, string lastName, DateTime birthDay)
@@ -167,7 +167,7 @@ namespace User.Domain
             }
 
             Apply(new UpdateEvent(firstName, lastName, birthDay));
-            return Result.Ok;
+            return Result.Ok();
         }
     }
 }
