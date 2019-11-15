@@ -2,13 +2,13 @@
 
 namespace User.Domain.Event
 {
-    public class RemoveAddressEvent : IEvent
+    public class AddressRemoveEvent : IEvent
     {
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
 
         public Guid Id { get; }
 
-        public RemoveAddressEvent(Guid id)
+        public AddressRemoveEvent(Guid id)
         {
             Id = id;
         }

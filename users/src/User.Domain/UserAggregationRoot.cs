@@ -26,7 +26,7 @@ namespace User.Domain
                 return PhoneError.NumberAlreadyExist;
             }
 
-            Apply(new AddPhoneEvent(number));
+            Apply(new PhoneAddEvent(number));
             return Result.Ok;
         }
 
@@ -42,7 +42,7 @@ namespace User.Domain
                 return PhoneError.NumbernotFound;
             }
 
-            Apply(new RemovePhoneEvent(number));
+            Apply(new PhoneRemoveEvent(number));
             return Result.Ok;
         }
         #endregion
@@ -71,7 +71,7 @@ namespace User.Domain
                     ;
             }
 
-            Apply(new AddAddressEvent(postCode, number, line));
+            Apply(new AddressAddEvent(postCode, number, line));
             return Result.Ok;
         }
 
@@ -87,7 +87,7 @@ namespace User.Domain
                 return AddressError.AddressNotFound;
             }
 
-            Apply(new RemoveAddressEvent(addressId));
+            Apply(new AddressRemoveEvent(addressId));
             return Result.Ok;
         }
         #endregion
@@ -134,7 +134,7 @@ namespace User.Domain
                 return UserError.InvalidBirthDay;
             }
 
-            Apply(new CreateUserEvent(email, firstName, lastName, birthDay));
+            Apply(new CreateEvent(email, firstName, lastName, birthDay));
             return Result.Ok;
         }
 
@@ -166,7 +166,7 @@ namespace User.Domain
                 return UserError.InvalidBirthDay;
             }
 
-            Apply(new UpdateUserEvent(firstName, lastName, birthDay));
+            Apply(new UpdateEvent(firstName, lastName, birthDay));
             return Result.Ok;
         }
     }

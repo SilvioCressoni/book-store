@@ -2,7 +2,7 @@
 
 namespace User.Domain.Event
 {
-    public class AddAddressEvent : IEvent
+    public class AddressAddEvent : IEvent
     {
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
 
@@ -10,7 +10,7 @@ namespace User.Domain.Event
         public int Number { get; }
         public string PostCode { get; }
 
-        public AddAddressEvent(string postCode, int number, string line)
+        public AddressAddEvent(string postCode, int number, string line)
         {
             PostCode = postCode ?? throw new ArgumentNullException(nameof(postCode));
             Number = number;
