@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using FluentNHibernate.Mapping;
 using User.Domain.Common;
 
