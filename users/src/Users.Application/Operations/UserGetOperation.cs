@@ -34,15 +34,17 @@ namespace Users.Application.Operations
                 var user = await _repository.GetByIdAsync(operation.Id, cancellation);
                 if (user == null)
                 {
+                    _logger.LogInformation("User not found");
                     return DomainError.UserError.UserNotFound;
                 }
 
+                _logger.LogInformation("Get user with success");
                 return Result.Ok(_mapper.Map(user));
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error to get user");
-                return Result.Fail(e.HResult.ToString(), e.ToString());
+                _logger.LogError(e, "Exception: ");
+                return Result.Fail(e);
             }
             finally
             {

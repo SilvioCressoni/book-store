@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Users.Application.Contracts.Request;
 using Users.Application.Operations;
@@ -15,6 +16,7 @@ namespace Users.Application.Test
     public class PhoneRemoveOperationTest
     {
         private readonly IUserAggregateStore _store;
+        private readonly ILogger<PhoneRemoveOperation> _logger;
         private readonly PhoneRemoveOperation _operation;
         private readonly Fixture _fixture;
 
@@ -22,12 +24,17 @@ namespace Users.Application.Test
         {
             _fixture = new Fixture();
             _store = Substitute.For<IUserAggregateStore>();
-            _operation = new PhoneRemoveOperation(_store);
+            _logger = Substitute.For<ILogger<PhoneRemoveOperation>>();
+            _operation = new PhoneRemoveOperation(_store, _logger);
         }
 
         [Fact]
         public void Create_Should_Throw_When_StoreIsNull()
-            => Throws<ArgumentNullException>(() => new PhoneRemoveOperation(null));
+            => Throws<ArgumentNullException>(() => new PhoneRemoveOperation(null, _logger));
+        
+        [Fact]
+        public void Create_Should_Throw_When_LoggerIsNull()
+            => Throws<ArgumentNullException>(() => new PhoneRemoveOperation(_store,null));
 
         [Fact]
         public async Task Execute_Should_ReturnUserNotFound()
@@ -43,6 +50,10 @@ namespace Users.Application.Test
             result.ErrorCode.Should().NotBeNullOrEmpty();
             result.Description.Should().NotBeNullOrEmpty();
             result.Should().Be(DomainError.UserError.UserNotFound);
+
+            await _store
+                .Received(1)
+                .GetAsync(phone.UserId, Arg.Any<CancellationToken>());
         }
 
 
@@ -65,6 +76,14 @@ namespace Users.Application.Test
             result.IsSuccess.Should().BeFalse();
             result.Value.Should().BeNull();
             result.Should().Be(fail);
+            
+            await _store
+                .Received(1)
+                .GetAsync(phone.UserId, Arg.Any<CancellationToken>());
+
+            root
+                .Received(1)
+                .RemovePhone(phone.Number);
         }
 
         [Fact]
@@ -85,6 +104,13 @@ namespace Users.Application.Test
             result.Value.Should().BeNull();
             result.Should().BeOfType<OkResult>();
             
+            await _store
+                .Received(1)
+                .GetAsync(phone.UserId, Arg.Any<CancellationToken>());
+
+            root
+                .Received(1)
+                .RemovePhone(phone.Number);
         }
     }
 }

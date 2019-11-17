@@ -33,14 +33,16 @@ namespace Users.Application.Operations
                 var root = await _store.GetAsync(operation.UserId, cancellation);
                 if (root == null)
                 {
+                    _logger.LogInformation("User not found");
                     return DomainError.UserError.UserNotFound;
                 }
                 
+                _logger.LogInformation("Address get with success");
                 return Result.Ok(root.State.Addresses.Select(x=> _mapper.Map(x)));
             }
             catch (Exception e)
             {
-                _logger.LogError(e,"Error to get user");
+                _logger.LogError(e,"Exception: ");
                 return Result.Fail(e);
             }
             finally

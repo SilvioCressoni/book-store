@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Users.Application.Contracts;
 using Users.Application.Contracts.Request;
+using Users.Application.Contracts.Response;
 using Users.Application.Operations;
 using Users.Domain;
-using Users.Web.Contracts;
-
 
 namespace Users.Web.Controllers
 {
@@ -25,7 +25,7 @@ namespace Users.Web.Controllers
                 Email = user.Email
             });
 
-            if (result is OkResult<Application.Contracts.Response.User> ok)
+            if (result is OkResult<User> ok)
             {
                 return Ok(ok.Value);
             }
@@ -49,13 +49,18 @@ namespace Users.Web.Controllers
                 BirthDay = user.BirthDay
             });
 
-            if (result is OkResult<Application.Contracts.Response.User> ok)
+            if (result is OkResult<User> ok)
             {
                 return Ok(ok.Value);
             }
 
             if (result is ErrorResult error && error.ErrorCode.StartsWith("USR"))
             {
+                if (error.ErrorCode == DomainError.UserError.UserNotFound.ErrorCode)
+                {
+                    return NotFound(error);
+                }
+                
                 return UnprocessableEntity(error);
             }
 
@@ -70,13 +75,18 @@ namespace Users.Web.Controllers
                 Id = id
             });
 
-            if (result is OkResult<Application.Contracts.Response.User> ok)
+            if (result is OkResult<User> ok)
             {
                 return Ok(ok.Value);
             }
 
             if (result is ErrorResult error && error.ErrorCode.StartsWith("USR"))
             {
+                if (error.ErrorCode == DomainError.UserError.UserNotFound.ErrorCode)
+                {
+                    return NotFound(error);
+                }
+                
                 return UnprocessableEntity(error);
             }
 
@@ -92,7 +102,7 @@ namespace Users.Web.Controllers
                 Take =  take ?? 0
             });
 
-            if (result is OkResult<IEnumerable<Application.Contracts.Response.User>> ok)
+            if (result is OkResult<IEnumerable<User>> ok)
             {
                 return Ok(ok.Value);
             }
@@ -107,6 +117,33 @@ namespace Users.Web.Controllers
         #endregion
 
         #region Phone
+        
+        [HttpGet("/{id}/phone")]
+        public async Task<IActionResult> GetPhone([FromRoute]Guid id, [FromServices] PhoneGetOperation operation)
+        {
+            var result = await operation.ExecuteAsync(new PhoneGet()
+            {
+                UserId = id,
+            });
+
+            if (result is OkResult<IEnumerable<Phone>> ok)
+            {
+                return Ok(ok.Value);
+            }
+
+            if (result is ErrorResult error && error.ErrorCode.StartsWith("USR"))
+            {
+                if (error.ErrorCode == DomainError.UserError.UserNotFound.ErrorCode)
+                {
+                    return NotFound(error);
+                }
+                
+                return UnprocessableEntity(error);
+            }
+
+            return BadRequest(result);
+        }
+        
         [HttpPost("/{id}/phone")]
         public async Task<IActionResult> AddPhone([FromRoute]Guid id, [FromBody] Phone phone, [FromServices] PhoneAddOperation operation)
         {
@@ -116,7 +153,7 @@ namespace Users.Web.Controllers
                 Number = phone.Number
             });
 
-            if (result is OkResult<Application.Contracts.Response.Phone> ok)
+            if (result is OkResult<Phone> ok)
             {
                 return Ok(new Phone
                 {
@@ -126,19 +163,24 @@ namespace Users.Web.Controllers
 
             if (result is ErrorResult error && error.ErrorCode.StartsWith("USR"))
             {
+                if (error.ErrorCode == DomainError.UserError.UserNotFound.ErrorCode)
+                {
+                    return NotFound(error);
+                }
+                
                 return UnprocessableEntity(error);
             }
 
             return BadRequest(result);
         }
 
-        [HttpDelete("/{id}/phone")]
-        public async Task<IActionResult> DeletePhone([FromRoute]Guid id, [FromBody] Phone phone, [FromServices] PhoneRemoveOperation operation)
+        [HttpDelete("/{id}/phone/{number}")]
+        public async Task<IActionResult> DeletePhone([FromRoute]Guid id, [FromRoute] string number, [FromServices] PhoneRemoveOperation operation)
         {
             var result = await operation.ExecuteAsync(new PhoneRemove
             {
                 UserId = id,
-                Number = phone.Number
+                Number = number
             });
 
             if (result is Domain.OkResult)
@@ -148,6 +190,10 @@ namespace Users.Web.Controllers
 
             if (result is ErrorResult error && error.ErrorCode.StartsWith("USR"))
             {
+                if (error.ErrorCode == DomainError.UserError.UserNotFound.ErrorCode)
+                {
+                    return NotFound(error);
+                }
                 return UnprocessableEntity(error);
             }
 
@@ -156,40 +202,70 @@ namespace Users.Web.Controllers
         #endregion
 
         #region Address
-        [HttpPost("/{id}/address")]
-        public async Task<IActionResult> AddAddress([FromRoute]Guid id, [FromBody] Phone phone, [FromServices] PhoneAddOperation operation)
+        [HttpGet("/{id}/address")]
+        public async Task<IActionResult> AddAddress([FromRoute]Guid id, [FromServices] AddressGetOperation operation)
         {
-            var result = await operation.ExecuteAsync(new PhoneAdd
+            var result = await operation.ExecuteAsync(new AddressGet
             {
                 UserId = id,
-                Number = phone.Number
             });
 
-            if (result is OkResult<PhoneAdd> ok)
+            if (result is OkResult<IEnumerable<Address>> ok)
             {
-                return Ok(new Phone
-                {
-                    Number = ok.Value.Number
-                });
+                return Ok(ok.Value);
             }
 
             if (result is ErrorResult error && error.ErrorCode.StartsWith("USR"))
             {
+                if (error.ErrorCode == DomainError.UserError.UserNotFound.ErrorCode)
+                {
+                    return NotFound(error);
+                }
+                
+                return UnprocessableEntity(error);
+            }
+
+            return BadRequest(result);
+        }
+        
+        [HttpPost("/{id}/address")]
+        public async Task<IActionResult> AddAddress([FromRoute]Guid id, [FromBody] Address address, [FromServices] AddressAddOperation operation)
+        {
+            var result = await operation.ExecuteAsync(new AddressAdd
+            {
+                UserId = id,
+                Number = address.Number,
+                Line = address.Line,
+                PostCode = address.PostCode
+            });
+
+            if (result is OkResult<Address> ok)
+            {
+                return Ok(ok.Value);
+            }
+
+            if (result is ErrorResult error && error.ErrorCode.StartsWith("USR"))
+            {
+                if (error.ErrorCode == DomainError.UserError.UserNotFound.ErrorCode)
+                {
+                    return NotFound(error);
+                }
+                
                 return UnprocessableEntity(error);
             }
 
             return BadRequest(result);
         }
 
-        [HttpDelete("/{id}/address")]
-        public async Task<IActionResult> DeleteAddress([FromRoute]Guid id, [FromBody] Phone phone, [FromServices] PhoneRemoveOperation operation)
+        [HttpDelete("/{id}/address/{addressId}")]
+        public async Task<IActionResult> DeleteAddress([FromRoute]Guid id, [FromBody] Guid addressId, [FromServices] AddressRemoveOperation operation)
         {
-            var result = await operation.ExecuteAsync(new PhoneRemove
+            var result = await operation.ExecuteAsync(new AddressRemove
             {
                 UserId = id,
-                Number = phone.Number
+                Id = addressId
             });
-
+            
             if (result is Domain.OkResult)
             {
                 return NoContent();
@@ -197,6 +273,11 @@ namespace Users.Web.Controllers
 
             if (result is ErrorResult error && error.ErrorCode.StartsWith("USR"))
             {
+                if (error.ErrorCode == DomainError.UserError.UserNotFound.ErrorCode)
+                {
+                    return NotFound(error);
+                }
+                
                 return UnprocessableEntity(error);
             }
 

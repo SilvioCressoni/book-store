@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Users.Application.Contracts.Request;
 using Users.Application.Contracts.Response;
 using Users.Domain;
@@ -10,30 +11,45 @@ namespace Users.Application.Operations
     public class PhoneRemoveOperation : IOperation<PhoneRemove>
     {
         private readonly IUserAggregateStore _store;
-
-        public PhoneRemoveOperation(IUserAggregateStore store)
+        private readonly ILogger<PhoneRemoveOperation> _logger;
+        
+        public PhoneRemoveOperation(IUserAggregateStore store, ILogger<PhoneRemoveOperation> logger)
         {
             _store = store ?? throw new ArgumentNullException(nameof(store));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async ValueTask<Result> ExecuteAsync(PhoneRemove operation, CancellationToken cancellation = default)
         {
-            var root = await _store.GetAsync(operation.UserId, cancellation);
-            if (root == null)
+            var scope = _logger.BeginScope("Remove Phone. [UserId: {0}]", operation.UserId);
+            try
             {
-                return DomainError.UserError.UserNotFound;
-            }
+                var root = await _store.GetAsync(operation.UserId, cancellation);
+                if (root == null)
+                {
+                    _logger.LogInformation("User not found");
+                    return DomainError.UserError.UserNotFound;
+                }
 
-            if (root.RemovePhone(operation.Number) is ErrorResult error)
-            {
-                return error;
-            }
+                if (root.RemovePhone(operation.Number) is ErrorResult error)
+                {
+                    _logger.LogInformation("Error [ErrorCode: {0}]", error.ErrorCode);
+                    return error;
+                }
 
-            await _store.SaveAsync(root, cancellation);
-            return Result.Ok(new Phone
+                await _store.SaveAsync(root, cancellation);
+                _logger.LogInformation("Phone remove with success");
+                return Result.Ok();
+            }
+            catch (Exception e)
             {
-                Number = operation.Number
-            });
+                _logger.LogError(e, "Exception: ");
+                return Result.Fail(e);
+            }
+            finally
+            {
+                scope.Dispose();
+            }
         }
     }
 }

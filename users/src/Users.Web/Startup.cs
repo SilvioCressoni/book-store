@@ -25,6 +25,8 @@ namespace Users.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddMvc();
+            services.AddSwaggerDocument();
             //services.AddGrpc();
 
             services.AddSingleton(provider => Fluently.Configure()
@@ -90,6 +92,9 @@ namespace Users.Web
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
 
             app.UseEndpoints(endpoints =>
             {

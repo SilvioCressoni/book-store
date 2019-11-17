@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Users.Application.Contracts.Request;
 using Users.Application.Contracts.Response;
+using Users.Application.Mapper;
 using Users.Domain;
 using Users.Infrastructure;
 
@@ -13,13 +14,18 @@ namespace Users.Application.Operations
     {
         private readonly IUserAggregateStore _store;
         private readonly IReadOnlyUserRepository _repository;
+        private readonly IMapper<Domain.Common.User, User> _mapper;
         private readonly ILogger<UserCreateOperation> _logger;
 
-        public UserCreateOperation(IUserAggregateStore store, IReadOnlyUserRepository repository, ILogger<UserCreateOperation> logger)
+        public UserCreateOperation(IUserAggregateStore store, 
+            IReadOnlyUserRepository repository, 
+            ILogger<UserCreateOperation> logger, 
+            IMapper<Domain.Common.User, User> mapper)
         {
             _store = store ?? throw new ArgumentNullException(nameof(store));
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public async ValueTask<Result> ExecuteAsync(UserAdd operation, CancellationToken cancellation = default)
@@ -32,7 +38,7 @@ namespace Users.Application.Operations
                 if (root.Create(operation.Email, operation.FirstName,
                     operation.LastNames, operation.BirthDay) is ErrorResult error)
                 {
-                    _logger.LogInformation("Error to create user: {0}", error.ErrorCode);
+                    _logger.LogInformation("Error [ErrorCode: {0}]", error.ErrorCode);
                     return error;
                 }
 
@@ -44,20 +50,13 @@ namespace Users.Application.Operations
 
                 await _store.SaveAsync(root, cancellation);
                 _logger.LogInformation("User created: [UserId: {0}]", root.State.Id );
-                return Result.Ok(new User
-                {
-                    Id = root.State.Id,
-                    Email = operation.Email,
-                    FirstName = operation.FirstName,
-                    LastNames = operation.LastNames,
-                    BirthDay = operation.BirthDay
-                });
+                return Result.Ok(_mapper.Map((Domain.Common.User)root.State));
                 
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error to create user");
-                return Result.Fail(e.HResult.ToString(), e.ToString());
+                _logger.LogError(e, "Exception: ");
+                return Result.Fail(e);
             }
             finally
             {
