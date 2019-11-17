@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Users.Application.Contracts.Request;
 using Users.Application.Contracts.Response;
+using Users.Application.Mapper;
 using Users.Domain;
 using Users.Infrastructure;
 
@@ -13,12 +14,16 @@ namespace Users.Application.Operations
     public class UserGetOperation : IOperation<UserGet>
     {
         private readonly IReadOnlyUserRepository _repository;
+        private readonly IMapper<Domain.Common.User, User> _mapper;
         private readonly ILogger<UserGetOperation> _logger;
 
-        public UserGetOperation(IReadOnlyUserRepository repository, ILogger<UserGetOperation> logger)
+        public UserGetOperation(IReadOnlyUserRepository repository, 
+            ILogger<UserGetOperation> logger, 
+            IMapper<Domain.Common.User, User> mapper)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public async ValueTask<Result> ExecuteAsync(UserGet operation, CancellationToken cancellation = default)
@@ -32,25 +37,7 @@ namespace Users.Application.Operations
                     return DomainError.UserError.UserNotFound;
                 }
 
-                return Result.Ok(new User
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    FirstName = user.FirstName, 
-                    LastNames = user.LastNames,
-                    BirthDay = user.BirthDay,
-                    Phones = user.Phones.Select(x=>new Phone
-                    {
-                        Number = x.Number
-                    }),
-                    Addresses =  user.Addresses.Select(x => new Address
-                    {
-                        Id = x.Id,
-                        Line = x.Line,
-                        Number = x.Number,
-                        PostCode = x.PostCode
-                    })
-                });
+                return Result.Ok(_mapper.Map(user));
             }
             catch (Exception e)
             {

@@ -36,6 +36,9 @@ namespace Users.Domain
 
         public static ErrorResult Fail(string error, string description)
             => new ErrorResult(error, description);
+        
+        public static ErrorResult Fail(Exception exception)
+            => new ErrorResult(exception.HResult.ToString(), exception.ToString());
 
         public bool Equals(Result other)
         {

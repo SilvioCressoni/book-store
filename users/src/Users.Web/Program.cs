@@ -23,6 +23,7 @@ namespace Users.Web
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
+                        .UseLinuxTransport()
                         .UseStartup<Startup>();
                 });
     }

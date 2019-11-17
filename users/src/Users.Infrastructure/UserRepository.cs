@@ -33,12 +33,7 @@ namespace Users.Infrastructure
             await _session.FlushAsync(cancellation);
         }
 
-        public IEnumerable<User> GetAll(int skip, int take)
-        {
-            foreach (var user in _session.Query<User>().Skip(skip).Take(take))
-            {
-                yield return user;
-            }
-        }
+        public IEnumerable<User> GetAll(int skip, int take) 
+            => _session.Query<User>().Skip(skip).Take(take);
     }
 }

@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NHibernate;
 using Npgsql;
+using Users.Application.Contracts.Response;
+using Users.Application.Mapper;
 using Users.Application.Operations;
 using Users.Domain;
 using Users.Infrastructure.Extensions;
@@ -23,7 +25,7 @@ namespace Users.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddGrpc();
+            //services.AddGrpc();
 
             services.AddSingleton(provider => Fluently.Configure()
                 .Database(() =>
@@ -59,15 +61,23 @@ namespace Users.Web
 
             services.AddScoped(provider => provider.GetRequiredService<ISessionFactory>().OpenSession());
             services.AddScoped<IUserAggregateStore, UserAggregateStore>();
+
+            services.AddSingleton<IMapper<Domain.Common.Address, Address>, AddressMapper>();
+            services.AddSingleton<IMapper<Domain.Common.Phone, Phone>, PhoneMapper>();
+            services.AddSingleton<IMapper<Domain.Common.User, User>, UserMapper>();
             
             services.AddScoped<PhoneAddOperation>();
             services.AddScoped<PhoneRemoveOperation>();
+            services.AddScoped<PhoneGetOperation>();
 
             services.AddScoped<AddressAddOperation>();
             services.AddScoped<AddressRemoveOperation>();
+            services.AddScoped<AddressGetOperation>();
 
             services.AddScoped<UserCreateOperation>();
             services.AddScoped<UserUpdateOperation>();
+            services.AddScoped<UserGetOperation>();
+            services.AddScoped<UserGetAllOperation>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
