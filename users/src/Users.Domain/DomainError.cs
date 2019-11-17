@@ -38,5 +38,11 @@ namespace Users.Domain
 
             public static ErrorResult EmailAlreadyExist { get; } = Fail("USR006", "Email already exist");
         }
+
+        public static class GetError
+        {
+            public static ErrorResult InvalidTake { get; } = Fail("USR300", "Take should be great or equal to 0");
+            public static ErrorResult InvalidSkip { get; } = Fail("USR301", "Skip should be great or equal to 0");
+        }
     }
 }

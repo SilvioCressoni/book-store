@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NHibernate;
@@ -29,6 +31,14 @@ namespace Users.Infrastructure
         {
             await _session.SaveOrUpdateAsync(user, cancellation);
             await _session.FlushAsync(cancellation);
+        }
+
+        public IEnumerable<User> GetAll(int skip, int take)
+        {
+            foreach (var user in _session.Query<User>().Skip(skip).Take(take))
+            {
+                yield return user;
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using NSubstitute;
-using Users.Application.Contracts;
+using Users.Application.Contracts.Request;
 using Users.Application.Operations;
 using Users.Domain;
 using Xunit;
@@ -33,7 +33,7 @@ namespace Users.Application.Test
         [Fact]
         public async Task Execute_Should_ReturnUserNotFound()
         {
-            var phone = _fixture.Create<Phone>();
+            var phone = _fixture.Create<PhoneAdd>();
             _store.GetAsync(phone.UserId, Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult((IUserAggregationRoot) null));
 
@@ -41,7 +41,7 @@ namespace Users.Application.Test
 
             result.IsSuccess.Should().BeFalse();
             result.Value.Should().BeNull();
-            result.Error.Should().NotBeNullOrEmpty();
+            result.ErrorCode.Should().NotBeNullOrEmpty();
             result.Description.Should().NotBeNullOrEmpty();
             result.Should().Be(DomainError.UserError.UserNotFound);
         }
@@ -50,7 +50,7 @@ namespace Users.Application.Test
         [Fact]
         public async Task Execute_Should_ReturnError()
         {
-            var phone = _fixture.Create<Phone>();
+            var phone = _fixture.Create<PhoneAdd>();
             var root = Substitute.For<IUserAggregationRoot>();
 
             _store.GetAsync(phone.UserId, Arg.Any<CancellationToken>())
@@ -71,7 +71,7 @@ namespace Users.Application.Test
         [Fact]
         public async Task Execute_Should_ReturnOk()
         {
-            var phone = _fixture.Create<Phone>();
+            var phone = _fixture.Create<PhoneAdd>();
             var root = Substitute.For<IUserAggregationRoot>();
 
             _store.GetAsync(phone.UserId, Arg.Any<CancellationToken>())
@@ -84,8 +84,8 @@ namespace Users.Application.Test
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().NotBeNull();
-            result.Should().BeOfType<OkResult<Phone>>();
-            ((OkResult<Phone>) result).Value.Should().Be(phone);
+            result.Should().BeOfType<OkResult<PhoneAdd>>();
+            ((OkResult<PhoneAdd>) result).Value.Should().Be(phone);
         }
     }
 }

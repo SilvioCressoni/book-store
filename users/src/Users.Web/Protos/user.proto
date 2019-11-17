@@ -1,0 +1,17 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Users.Web";
+
+service Users {
+  rpc PhoneAdd (PhoneRequest) returns (PhoneReplay);
+}
+
+message PhoneRequest {
+  string userId = 1;
+  string number = 2;
+}
+
+message PhoneReplay {
+	string userId = 1;
+	string number = 2;
+}

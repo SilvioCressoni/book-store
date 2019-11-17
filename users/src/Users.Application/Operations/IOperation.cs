@@ -6,6 +6,6 @@ namespace Users.Application.Operations
 {
     public interface IOperation<T>
     {
-        Task<Result> ExecuteAsync(T operation, CancellationToken cancellation = default);
+        ValueTask<Result> ExecuteAsync(T operation, CancellationToken cancellation = default);
     }
 }

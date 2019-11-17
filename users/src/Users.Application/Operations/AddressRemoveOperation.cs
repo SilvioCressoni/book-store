@@ -6,7 +6,7 @@ using Users.Domain;
 
 namespace Users.Application.Operations
 {
-    public class AddressRemoveOperation : IOperation<Address>
+    public class AddressRemoveOperation : IOperation<AddressRemove>
     {
         private readonly IUserAggregateStore _store;
 
@@ -15,7 +15,7 @@ namespace Users.Application.Operations
             _store = store ?? throw new ArgumentNullException(nameof(store));
         }
 
-        public async Task<Result> ExecuteAsync(Address operation, CancellationToken cancellation = default)
+        public async ValueTask<Result> ExecuteAsync(AddressRemove operation, CancellationToken cancellation = default)
         {
             var root = await _store.GetAsync(operation.UserId, cancellation);
 

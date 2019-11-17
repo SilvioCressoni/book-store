@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Users.Application.Contracts;
+using Users.Application.Contracts.Request;
+using Users.Application.Contracts.Response;
 using Users.Domain;
 
 namespace Users.Application.Operations
 {
-    public class AddressAddOperation : IOperation<Address>
+    public class AddressAddOperation : IOperation<AddressAdd>
     {
         private readonly IUserAggregateStore _store;
 
@@ -16,7 +17,7 @@ namespace Users.Application.Operations
             _store = store ?? throw new ArgumentNullException(nameof(store));
         }
 
-        public async Task<Result> ExecuteAsync(Address operation, CancellationToken cancellation = default)
+        public async ValueTask<Result> ExecuteAsync(AddressAdd operation, CancellationToken cancellation = default)
         {
             var root = await _store.GetAsync(operation.UserId, cancellation);
 
@@ -37,8 +38,7 @@ namespace Users.Application.Operations
                 Id = address.Id,
                 Line = operation.Line,
                 Number = operation.Number,
-                PostCode = operation.PostCode,
-                UserId = operation.UserId
+                PostCode = operation.PostCode
             });
         }
     }
