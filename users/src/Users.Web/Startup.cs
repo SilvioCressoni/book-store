@@ -29,6 +29,11 @@ namespace Users.Web
             services.AddSwaggerDocument();
             //services.AddGrpc();
 
+            services.AddMiniProfiler(options =>
+            {
+                options.RouteBasePath = "/profiler";
+            });
+
             services.AddSingleton(provider => Fluently.Configure()
                 .Database(() =>
                 {
@@ -95,6 +100,7 @@ namespace Users.Web
             
             app.UseOpenApi();
             app.UseSwaggerUi3();
+            app.UseMiniProfiler();
 
             app.UseEndpoints(endpoints =>
             {
