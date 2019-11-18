@@ -19,6 +19,11 @@ namespace Users.Domain
         {
             if (number.IsMissing())
             {
+                return PhoneError.MissingNumber;
+            }
+
+            if (number.Length > 15)
+            {
                 return PhoneError.InvalidNumber;
             }
 
@@ -35,7 +40,7 @@ namespace Users.Domain
         {
             if (number.IsMissing())
             {
-                return PhoneError.InvalidNumber;
+                return PhoneError.MissingNumber;
             }
 
             if (State.Phones.All(x => x.Number != number))
@@ -53,6 +58,11 @@ namespace Users.Domain
         {
             if (line.IsMissing())
             {
+                return AddressError.MissingLine;
+            }
+
+            if (line.Length > 100)
+            {
                 return AddressError.InvalidLine;
             }
 
@@ -62,6 +72,11 @@ namespace Users.Domain
             }
 
             if (postCode.IsMissing())
+            {
+                return AddressError.MissingPostCode;
+            }
+
+            if (postCode.Length > 10)
             {
                 return AddressError.InvalidPostCode;
             }
