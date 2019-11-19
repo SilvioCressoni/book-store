@@ -8,11 +8,11 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_PASSWORD: BookStore@123
+      POSTGRES_PASSWORD: "BookStore@123"
     volumes:
       - "postgres-store:/var/lib/postgresql/data"
-  ravendb: 
-    image: ravendb/ravendb
-    container_name: raven-book-store
-    ports:
-      - 8080:8080
+  # ravendb: 
+  #   image: ravendb/ravendb
+  #   container_name: raven-book-store
+  #   ports:
+  #     - 8080:8080

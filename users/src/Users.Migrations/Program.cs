@@ -31,8 +31,7 @@ namespace Users.Migrations
                     // Add SQLite support to FluentMigrator
                     .AddPostgres()
                     // Set the connection string
-                    .WithGlobalConnectionString("Data Source=test.db")
-                    
+                    .WithGlobalConnectionString("Server=localhost;Port=5432;Database=bookstoreuser;User Id=postgres;Password=BookStore@123;")
                     // Define the assembly containing the migrations
                     .ScanIn(typeof(AddPhoneTable).Assembly).For.Migrations())
                 // Enable logging to console in the FluentMigrator way

@@ -39,29 +39,13 @@ namespace Users.Web
                 {
                     var configure = provider.GetRequiredService<IConfiguration>();
                     var connection = configure.GetConnectionString("Postgres");
-
-                    if (connection.IsMissing())
+                    
+                    var builder = new NpgsqlConnectionStringBuilder(connection)
                     {
-                        var builder = new NpgsqlConnectionStringBuilder(connection)
-                        {
-                            ApplicationName = "BookStoreUser"
-                        };
+                        ApplicationName = "BookStoreUser"
+                    };
 
-                        return PostgreSQLConfiguration.Standard.ConnectionString(builder.ToString());
-                    }
-
-                    connection = configure.GetConnectionString("SqlServer");
-                    if (connection.IsMissing())
-                    {
-                        var builder = new SqlConnectionStringBuilder(connection)
-                        {
-                            ApplicationName = "BookStoreUser"
-                        };
-
-                        return MsSqlConfiguration.MsSql2012.ConnectionString(builder.ToString());
-                    }
-
-                    throw new NotSupportedException();
+                    return PostgreSQLConfiguration.Standard.ConnectionString(builder.ToString());
                 })
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<UserMap>())
                 .BuildSessionFactory());
