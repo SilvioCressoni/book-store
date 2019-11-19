@@ -11,7 +11,7 @@ namespace Users.Domain.Common
         public virtual string Email { get; set; }
         public virtual DateTime BirthDay { get; set; }
         
-        public virtual ISet<Phone> Phones { get; set; }
-        public virtual ICollection<Address> Addresses { get; set; }
+        public virtual ISet<Phone> Phones { get; set; } = new HashSet<Phone>();
+        public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
     }
 }

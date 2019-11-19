@@ -1,2 +1,10 @@
 [root]
 true
+
+[*]
+indent_size = 2
+indent_style = space
+
+[*.{cs|cake}]
+
+indent_size = 4
