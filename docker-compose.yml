@@ -1,0 +1,18 @@
+version: "3"
+volumes:
+  postgres-store:
+services:
+  postgres:
+    image: postgres
+    container_name: postgres-book-store
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD: BookStore@123
+    volumes:
+      - "postgres-store:/var/lib/postgresql/data"
+  ravendb: 
+    image: ravendb/ravendb
+    container_name: raven-book-store
+    ports:
+      - 8080:8080
