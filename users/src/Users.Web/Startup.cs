@@ -1,5 +1,6 @@
 using System;
 using System.Data.SqlClient;
+using Autofac;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using Microsoft.AspNetCore.Builder;
@@ -13,6 +14,7 @@ using Users.Application.Contracts.Response;
 using Users.Application.Mapper;
 using Users.Application.Operations;
 using Users.Domain;
+using Users.Infrastructure;
 using Users.Infrastructure.Extensions;
 using Users.Infrastructure.Mapper;
 
@@ -33,11 +35,18 @@ namespace Users.Web
             {
                 options.RouteBasePath = "/profiler";
             });
-
-            services.AddSingleton(provider => Fluently.Configure()
+        }
+        
+        // ConfigureContainer is where you can register things directly
+        // with Autofac. This runs after ConfigureServices so the things
+        // here will override registrations made in ConfigureServices.
+        // Don't build the container; that gets done for you by the factory.
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.Register(provider => Fluently.Configure()
                 .Database(() =>
                 {
-                    var configure = provider.GetRequiredService<IConfiguration>();
+                    var configure = provider.Resolve<IConfiguration>();
                     var connection = configure.GetConnectionString("Postgres");
                     
                     var builder = new NpgsqlConnectionStringBuilder(connection)
@@ -48,27 +57,73 @@ namespace Users.Web
                     return PostgreSQLConfiguration.Standard.ConnectionString(builder.ToString());
                 })
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<UserMap>())
-                .BuildSessionFactory());
-
-            services.AddScoped(provider => provider.GetRequiredService<ISessionFactory>().OpenSession());
-            services.AddScoped<IUserAggregateStore, UserAggregateStore>();
-
-            services.AddSingleton<IMapper<Domain.Common.Address, Address>, AddressMapper>();
-            services.AddSingleton<IMapper<Domain.Common.Phone, Phone>, PhoneMapper>();
-            services.AddSingleton<IMapper<Domain.Common.User, User>, UserMapper>();
+                .BuildSessionFactory())
+                .SingleInstance();
             
-            services.AddScoped<PhoneAddOperation>();
-            services.AddScoped<PhoneRemoveOperation>();
-            services.AddScoped<PhoneGetOperation>();
+            builder.Register(provider => provider.Resolve<ISessionFactory>().OpenSession())
+                .AsSelf()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<UserRepository>()
+                .As<IUserRepository>()
+                .As<IReadOnlyUserRepository>()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<UserAggregateStore>()
+                .As<IUserAggregateStore>()
+                .InstancePerLifetimeScope();
 
-            services.AddScoped<AddressAddOperation>();
-            services.AddScoped<AddressRemoveOperation>();
-            services.AddScoped<AddressGetOperation>();
+            builder.RegisterType<AddressMapper>()
+                .As<IMapper<Domain.Common.Address, Address>>()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<PhoneMapper>()
+                .As<IMapper<Domain.Common.Phone, Phone>>()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<UserMapper>()
+                .As<IMapper<Domain.Common.User, User>>()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<PhoneAddOperation>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<PhoneRemoveOperation>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<PhoneGetOperation>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
 
-            services.AddScoped<UserCreateOperation>();
-            services.AddScoped<UserUpdateOperation>();
-            services.AddScoped<UserGetOperation>();
-            services.AddScoped<UserGetAllOperation>();
+            builder.RegisterType<AddressAddOperation>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<AddressRemoveOperation>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<AddressGetOperation>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<UserCreateOperation>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<UserUpdateOperation>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<UserGetOperation>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
+            
+            builder.RegisterType<UserGetAllOperation>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
