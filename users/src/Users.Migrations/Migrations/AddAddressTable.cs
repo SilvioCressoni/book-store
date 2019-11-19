@@ -8,7 +8,7 @@ namespace Users.Migrations.Migrations
         public override void Up()
         {
             Create
-                .Table("Address")
+                .Table("Addresses")
                 .WithColumn("Id").AsGuid().PrimaryKey("PK_Address_Id")
                 .WithColumn("Line").AsString(100).NotNullable()
                 .WithColumn("Number").AsInt32().NotNullable()

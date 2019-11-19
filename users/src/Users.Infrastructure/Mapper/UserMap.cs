@@ -6,7 +6,8 @@ namespace Users.Infrastructure.Mapper
     {
         public UserMap()
         {
-            Table(nameof(Domain.Common.User));
+            Schema("public");
+            Table("Users");
 
             Id(x => x.Id)
                 .GeneratedBy.Guid();

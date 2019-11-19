@@ -8,7 +8,7 @@ namespace Users.Domain.Common
         public virtual string Number { get; set; }
         public virtual User User { get; set; }
 
-        public bool Equals(Phone other)
+        public virtual bool Equals(Phone other)
         {
             if (ReferenceEquals(null, other))
             {

@@ -7,7 +7,8 @@ namespace Users.Infrastructure.Mapper
     {
         public AddressMap()
         {
-            Table(nameof(Address));
+            Schema("public");
+            Table("Addresses");
 
             Id(x => x.Id)
                 .GeneratedBy.Guid();

@@ -7,18 +7,18 @@ namespace Users.Infrastructure.Mapper
     {
         public PhoneMap()
         {
-            Table("Phone");
+            Schema("public");
+            Table("Phones");
+            
             Id(x => x.Id)
                 .GeneratedBy.Guid();
 
             Map(x => x.Number)
                 .Not.Nullable()
-                .Length(15)
-                .Index("IX_Phone_Number");
+                .Length(15);
 
             References(x => x.User)
-                .LazyLoad()
-                .Column("UserId");
+                .LazyLoad();
         }
     }
 }
