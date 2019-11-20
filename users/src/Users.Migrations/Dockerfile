@@ -11,5 +11,4 @@ RUN dotnet publish -c Release -o out -r linux-x64
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
 WORKDIR /app
 COPY --from=build-env /app/out .
-ENV ASPNETCORE_ENVIRONMENT Development
-ENTRYPOINT ["dotnet", "Users.Web.dll"]
+ENTRYPOINT ["dotnet", "Users.Migrations.dll"]

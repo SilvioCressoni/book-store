@@ -11,6 +11,11 @@ services:
       POSTGRES_PASSWORD: "BookStore@123"
     volumes:
       - "postgres-store:/var/lib/postgresql/data"
+  users-migrations:
+    build: ./users/src/Users.Migrations
+    container_name: users--migrations-book-store
+    depends_on:
+      - postgres
   users:
     build: ./users
     container_name: users-book-store
@@ -18,6 +23,7 @@ services:
       - 5100:5100
     depends_on:
       - postgres
+      - users-migrations
   # ravendb: 
   #   image: ravendb/ravendb
   #   container_name: raven-book-store

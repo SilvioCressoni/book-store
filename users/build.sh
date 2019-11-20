@@ -115,35 +115,28 @@ do
 done
 
 if [ "$clean" = true ]; then 
-  echo "======Clean solution==========="
    dotnet clean "$workDir/Users.sln"
 fi
 
 if [ "$restore" = true ]; then 
-  echo "======Restore solution==========="
   dotnet restore "$workDir/Users.sln"
 fi
 
 if [ "$build" = true ]; then 
-  echo "======Build solution==========="
   dotnet build "$workDir/Users.sln" -c $configuration
 fi
 
 if [ "$publish" = true ]; then
-  echo "======Publish solution==========="
   dotnet publish "$workDir/src/Users.Web" -c $configuration -o $artifacts
 fi
 
 if [ "$migrations" = true ]; then 
-  echo "======Run migration==========="
-  dotnet tool restore
-  dotnet fm migrate -p Postgres -c "$connectionString" -a ../src/Users.Migrations/bin/$configuration/netstandard2.0/Users.Migrations.dll
+  dotnet run "$workDir/src/Users.Migrations" -cs "$connectionString"
 fi
 
 if [ "$docker" = true ]; then 
-  echo "======Docker project==========="
-  dotnet tool restore
-  dotnet fm migrate -p Postgres -c "$connectionString" -a ../src/Users.Migrations/bin/$configuration/netstandard2.0/Users.Migrations.dll
+  docker build -t users-book-store .
+docker build -t users-migrations-book-store "$workDir/src/Users.Migrations"
 fi
 
 exit 0
