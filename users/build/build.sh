@@ -12,6 +12,8 @@ usage() {
   echo "Common settings:"
   echo "  --configuration <value>  Build configuration: 'Debug' or 'Release' (short: -c)"
   echo "  --verbosity <value>      Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
+  echo "  --workDir <value>        Work directory (short: -w)"
+  echo "  --artifacts <value>      Artifacts output (short: -a)"
   echo "  --help                   Print help and exit"
   echo ""
 
@@ -24,6 +26,7 @@ usage() {
   echo " --publish                Publish artifacts (e.g. symbols)"
   echo " --migrations             Run migrations(short: -m)"
   echo " --connectionString       Connection string (short: -cs)"
+  echo " --docker                 Generate docker image (short: -d)"
   echo ""
 
   echo "Command line arguments not listed above are passed thru to msbuild."
@@ -33,6 +36,8 @@ usage() {
 verbosity='minimal'
 configuration='Debug'
 properties=''
+workDir='..'
+artifacts='../.artifacts'
 connectionString='Server=localhost;Port=5432;Database=bookstoreuser;User Id=postgres;Password=BookStore@123;'
 
 restore=false
@@ -42,6 +47,7 @@ test=false
 integrationTest=false
 publish=false
 migrations=false
+docker=false
 
 while [ $# -gt 0 ]
 do
@@ -77,6 +83,7 @@ do
       ;;
     --publish)
       publish=true
+      configuration="Release"
       ;;
     --migrations|-m)
       migrations=true
@@ -85,6 +92,19 @@ do
     --connectionString|-cs)
       connectionString=$2
       shift
+      ;;
+    --workDir|-w)
+      workDir=$2
+      shift
+      ;;
+    --artifacts|-a)
+      artifacts=$2
+      shift
+      ;;
+    --docker|-d)
+      docker=true
+      publish=true
+      configuration="Release"
       ;;
     *)
       properties="$properties $1"
@@ -95,18 +115,33 @@ do
 done
 
 if [ "$clean" = true ]; then 
-   dotnet clean ../Users.sln
+  echo "======Clean solution==========="
+   dotnet clean "$workDir/Users.sln"
 fi
 
 if [ "$restore" = true ]; then 
-  dotnet restore ../Users.sln
+  echo "======Restore solution==========="
+  dotnet restore "$workDir/Users.sln"
 fi
 
 if [ "$build" = true ]; then 
-  dotnet build ../Users.sln -c $configuration
+  echo "======Build solution==========="
+  dotnet build "$workDir/Users.sln" -c $configuration
+fi
+
+if [ "$publish" = true ]; then
+  echo "======Publish solution==========="
+  dotnet publish "$workDir/src/Users.Web" -c $configuration -o $artifacts
 fi
 
 if [ "$migrations" = true ]; then 
+  echo "======Run migration==========="
+  dotnet tool restore
+  dotnet fm migrate -p Postgres -c "$connectionString" -a ../src/Users.Migrations/bin/$configuration/netstandard2.0/Users.Migrations.dll
+fi
+
+if [ "$docker" = true ]; then 
+  echo "======Docker project==========="
   dotnet tool restore
   dotnet fm migrate -p Postgres -c "$connectionString" -a ../src/Users.Migrations/bin/$configuration/netstandard2.0/Users.Migrations.dll
 fi
