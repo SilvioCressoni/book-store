@@ -1,6 +1,6 @@
 using FluentMigrator;
 
-namespace Users.Migrations.Migrations
+namespace Users.Migrations
 {
     [Migration(20191119075000)]
     public class AddPhoneTable : Migration

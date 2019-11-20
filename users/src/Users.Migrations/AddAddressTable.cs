@@ -1,6 +1,6 @@
 using FluentMigrator;
 
-namespace Users.Migrations.Migrations
+namespace Users.Migrations
 {
     [Migration(20191119080000)]
     public class AddAddressTable : Migration

@@ -36,8 +36,8 @@ usage() {
 verbosity='minimal'
 configuration='Debug'
 properties=''
-workDir='..'
-artifacts='../.artifacts'
+workDir='.'
+artifacts='./.artifacts'
 connectionString='Server=localhost;Port=5432;Database=bookstoreuser;User Id=postgres;Password=BookStore@123;'
 
 restore=false
