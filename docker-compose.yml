@@ -11,6 +11,13 @@ services:
       POSTGRES_PASSWORD: "BookStore@123"
     volumes:
       - "postgres-store:/var/lib/postgresql/data"
+  users:
+    build: ./users
+    container_name: users-book-store
+    ports:
+      - 5100:5100
+    depends_on:
+      - postgres
   # ravendb: 
   #   image: ravendb/ravendb
   #   container_name: raven-book-store
