@@ -17,14 +17,15 @@ namespace Users.Web
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureAppConfiguration(config =>
                 {
-                    config.AddJsonFile("appsettings.json", optional: false)
-                        .AddJsonFile("appsettings.override.json", optional: true)
+                    config
+                        .AddJsonFile("appsettings.json", optional: false)
                         .AddEnvironmentVariables("USR_")
                         .AddCommandLine(args);
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
+                        .UseUrls("http://*:5100")
                         .UseLinuxTransport()
                         .UseStartup<Startup>();
                 });
