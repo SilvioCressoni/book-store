@@ -15,13 +15,13 @@ namespace Users.Application.Operations
 {
     public class UserGetAllOperation : IOperation<UserGetAll>
     {
-        private readonly IUserRepository _repository;
+        private readonly IReadOnlyUserRepository _repository;
         private readonly IMapper<Domain.Common.User, User> _mapper;
-        private readonly ILogger<UserGetOperation> _logger;
+        private readonly ILogger<UserGetAllOperation> _logger;
 
-        public UserGetAllOperation(IUserRepository repository, 
-            IMapper<Domain.Common.User, User> mapper, 
-            ILogger<UserGetOperation> logger)
+        public UserGetAllOperation(IReadOnlyUserRepository repository,
+            ILogger<UserGetAllOperation> logger,
+            IMapper<Domain.Common.User, User> mapper)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -68,13 +68,13 @@ namespace Users.Application.Operations
 
         private class UserCollection : IEnumerable<User>
         {
-            private readonly IUserRepository _repository;
+            private readonly IReadOnlyUserRepository _repository;
             private readonly IMapper<Domain.Common.User, User> _mapper;
             private readonly int _skip;
             private readonly int _take;
 
-            public UserCollection(IUserRepository repository, 
-                int take, int skip, 
+            public UserCollection(IReadOnlyUserRepository repository,
+                int skip, int take, 
                 IMapper<Domain.Common.User, User> mapper)
             {
                 _repository = repository ?? throw new ArgumentNullException(nameof(repository));
