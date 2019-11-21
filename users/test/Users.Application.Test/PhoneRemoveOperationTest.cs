@@ -5,6 +5,7 @@ using AutoFixture;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Users.Application.Contracts.Request;
 using Users.Application.Operations;
 using Users.Domain;
@@ -54,6 +55,10 @@ namespace Users.Application.Test
             await _store
                 .Received(1)
                 .GetAsync(phone.UserId, Arg.Any<CancellationToken>());
+
+            await _store
+                .DidNotReceive()
+                .SaveAsync(Arg.Any<IUserAggregationRoot>(), Arg.Any<CancellationToken>());
         }
 
 
@@ -84,6 +89,10 @@ namespace Users.Application.Test
             root
                 .Received(1)
                 .RemovePhone(phone.Number);
+            
+            await _store
+                .DidNotReceive()
+                .SaveAsync(Arg.Any<IUserAggregationRoot>(), Arg.Any<CancellationToken>());
         }
 
         [Fact]
@@ -111,6 +120,36 @@ namespace Users.Application.Test
             root
                 .Received(1)
                 .RemovePhone(phone.Number);
+            
+            await _store
+                .Received(1)
+                .SaveAsync(root, Arg.Any<CancellationToken>());
+        }
+        
+        [Fact]
+        public async Task Execute_Should_ReturnError_When_ThrowException()
+        {
+            var phone = _fixture.Create<PhoneRemove>();
+            
+            var exception = _fixture.Create<Exception>();
+            _store.GetAsync(phone.UserId, Arg.Any<CancellationToken>())
+                .Throws(exception);
+
+            var result = await _operation.ExecuteAsync(phone, CancellationToken.None);
+
+            result.IsSuccess.Should().BeFalse();
+            result.Value.Should().BeNull();
+            result.Should().BeOfType<ErrorResult>();
+            result.ErrorCode.Should().Be(exception.HResult.ToString());
+            result.Description.Should().Be(exception.ToString());
+
+            await _store
+                .Received(1)
+                .GetAsync(phone.UserId, Arg.Any<CancellationToken>());
+            
+            await _store
+                .DidNotReceive()
+                .SaveAsync(Arg.Any<IUserAggregationRoot>(), Arg.Any<CancellationToken>());
         }
     }
 }

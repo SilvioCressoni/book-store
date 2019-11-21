@@ -16,7 +16,6 @@ namespace Users.Application.Operations
         private readonly IUserAggregateStore _store;
         private readonly ILogger<AddressAddOperation> _logger;
         private readonly IMapper<Domain.Common.Address, Address> _mapper;
-        private readonly MiniProfiler profiler;
 
         public AddressAddOperation(IUserAggregateStore store, 
             ILogger<AddressAddOperation> logger, 
@@ -28,44 +27,39 @@ namespace Users.Application.Operations
         }
 
         public async ValueTask<Result> ExecuteAsync(AddressAdd operation, CancellationToken cancellation = default)
-        {
-            using var step = profiler.Step(nameof(AddressAddOperation));
-            using var scope = _logger.BeginScope("Get Address. [UserId: {0}]", operation.UserId);
+        { 
+            var scope = _logger.BeginScope("Get Address. [UserId: {0}]", operation.UserId);
             try
             {
-                IUserAggregationRoot root = null;
-
-                using (profiler.Step("GetUser"))
-                {
-                    root = await _store.GetAsync(operation.UserId, cancellation);
-                }
+                IUserAggregationRoot root = await _store.GetAsync(operation.UserId, cancellation);
 
                 if (root == null)
                 {
                     _logger.LogInformation("User not found");
                     return DomainError.UserError.UserNotFound;
                 }
-
+                
                 if (root.AddAddress(operation.Line, operation.Number, operation.PostCode) is ErrorResult error)
                 {
                     _logger.LogInformation("Error [ErrorCode: {0}].", error.ErrorCode);
                     return error;
                 }
 
-                using (profiler.Step("SaveUser"))
-                {
-                    await _store.SaveAsync(root, cancellation);
-                }
-                
+                await _store.SaveAsync(root, cancellation);
+
                 _logger.LogInformation("Address added with success");
                 var address = root.State.Addresses.Last();
-                
+
                 return Result.Ok(_mapper.Map(address));
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Exception: ");
                 return Result.Fail(e);
+            }
+            finally
+            {
+                scope.Dispose();
             }
         }
     }

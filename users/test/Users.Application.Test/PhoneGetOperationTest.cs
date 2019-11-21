@@ -11,7 +11,6 @@ using Users.Application.Contracts.Request;
 using Users.Application.Mapper;
 using Users.Application.Operations;
 using Users.Domain;
-using Users.Domain.Common;
 using Xunit;
 
 using static Xunit.Assert;
@@ -19,42 +18,43 @@ using Phone = Users.Application.Contracts.Response.Phone;
 
 namespace Users.Application.Test
 {
-    public class PhoneAddOperationTest
+    public class PhoneGetOperationTest
     {
         private readonly IUserAggregateStore _store;
-        private readonly ILogger<PhoneAddOperation> _logger;
+        private readonly ILogger<PhoneGetOperation> _logger;
         private readonly IMapper<Domain.Common.Phone, Phone> _mapper;
-        private readonly PhoneAddOperation _operation;
+        private readonly PhoneGetOperation _operation;
         private readonly Fixture _fixture;
 
-        public PhoneAddOperationTest()
+        public PhoneGetOperationTest()
         {
             _fixture = new Fixture();
+            
             _fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
             
             _store = Substitute.For<IUserAggregateStore>();
-            _logger = Substitute.For<ILogger<PhoneAddOperation>>();
+            _logger = Substitute.For<ILogger<PhoneGetOperation>>();
             _mapper = Substitute.For<IMapper<Domain.Common.Phone, Phone>>();
-            _operation = new PhoneAddOperation(_store, _logger, _mapper);
+            _operation = new PhoneGetOperation(_store, _logger, _mapper);
         }
 
         [Fact]
         public void Create_Should_Throw_When_StoreIsNull()
-            => Throws<ArgumentNullException>(() => new PhoneAddOperation(null, _logger, _mapper));
+            => Throws<ArgumentNullException>(() => new PhoneGetOperation(null, _logger, _mapper));
         
         [Fact]
         public void Create_Should_Throw_When_LoggerIsNull()
-            => Throws<ArgumentNullException>(() => new PhoneAddOperation(_store, null, _mapper));
+            => Throws<ArgumentNullException>(() => new PhoneGetOperation(_store, null, _mapper));
         
         [Fact]
         public void Create_Should_Throw_When_MapperIsNull()
-            => Throws<ArgumentNullException>(() => new PhoneAddOperation(_store, _logger, null));
+            => Throws<ArgumentNullException>(() => new PhoneGetOperation(_store, _logger, null));
         
         [Fact]
         public async Task Execute_Should_ReturnUserNotFound()
         {
-            var phone = _fixture.Create<PhoneAdd>();
+            var phone = _fixture.Create<PhoneGet>();
             _store.GetAsync(phone.UserId, Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult((IUserAggregationRoot) null));
 
@@ -69,104 +69,52 @@ namespace Users.Application.Test
             await _store
                 .Received(1)
                 .GetAsync(phone.UserId, Arg.Any<CancellationToken>());
-
-            _mapper
-                .DidNotReceive()
-                .Map(Arg.Any<Domain.Common.Phone>());
-            
-            await _store
-                .DidNotReceive()
-                .SaveAsync(Arg.Any<IUserAggregationRoot>(), Arg.Any<CancellationToken>());
-        }
-
-
-        [Fact]
-        public async Task Execute_Should_ReturnError()
-        {
-            var phone = _fixture.Create<PhoneAdd>();
-            var root = Substitute.For<IUserAggregationRoot>();
-
-            _store.GetAsync(phone.UserId, Arg.Any<CancellationToken>())
-                .Returns(Task.FromResult(root));
-
-            var fail = _fixture.Create<ErrorResult>();
-
-            root.AddPhone(phone.Number)
-                .Returns(fail);
-
-            var result = await _operation.ExecuteAsync(phone, CancellationToken.None);
-
-            result.IsSuccess.Should().BeFalse();
-            result.Value.Should().BeNull();
-            result.Should().Be(fail);
-            
-            await _store
-                .Received(1)
-                .GetAsync(phone.UserId, Arg.Any<CancellationToken>());
-
-            root
-                .Received(1)
-                .AddPhone(phone.Number);
             
             _mapper
                 .DidNotReceive()
                 .Map(Arg.Any<Domain.Common.Phone>());
-            
-            await _store
-                .DidNotReceive()
-                .SaveAsync(Arg.Any<IUserAggregationRoot>(), Arg.Any<CancellationToken>());
         }
+
 
         [Fact]
         public async Task Execute_Should_ReturnOk()
         {
-            var phone = _fixture.Create<PhoneAdd>();
+            var phone = _fixture.Create<PhoneGet>();
             var root = Substitute.For<IUserAggregationRoot>();
-            root.State.Returns(new UserState(new User
-            {
-                Phones = _fixture.Create<HashSet<Domain.Common.Phone>>()
-            }));
 
             _store.GetAsync(phone.UserId, Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult(root));
 
-            root.AddPhone(phone.Number)
-                .Returns(Result.Ok());
+            ISet<Domain.Common.Phone> phones = _fixture.Create<HashSet<Domain.Common.Phone>>();
+            root.State
+                .Returns(new UserState(new Domain.Common.User
+                {
+                    Phones = phones
+                }));
 
             _mapper.Map(Arg.Any<Domain.Common.Phone>())
-                .Returns(new Phone
-                {
-                    Number = phone.Number
-                });
-
+                .Returns(_fixture.Create<Phone>());
+            
             var result = await _operation.ExecuteAsync(phone, CancellationToken.None);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().NotBeNull();
-            result.Should().BeOfType<OkResult<Phone>>();
-            ((OkResult<Phone>) result).Value.Number.Should().Be(phone.Number);
+            result.Should().BeOfType<OkResult<IEnumerable<Phone>>>();
+            ((OkResult<IEnumerable<Phone>>) result).Value.Should().HaveCount(phones.Count);
             
             await _store
                 .Received(1)
                 .GetAsync(phone.UserId, Arg.Any<CancellationToken>());
 
-            root
-                .Received(1)
-                .AddPhone(phone.Number);
-            
             _mapper
-                .Received(1)
+                .Received(phones.Count)
                 .Map(Arg.Any<Domain.Common.Phone>());
-            
-            await _store
-                .Received(1)
-                .SaveAsync(root, Arg.Any<CancellationToken>());
         }
-        
+
         [Fact]
         public async Task Execute_Should_ReturnError_When_ThrowException()
         {
-            var phone = _fixture.Create<PhoneAdd>();
+            var phone = _fixture.Create<PhoneGet>();
             
             var exception = _fixture.Create<Exception>();
             _store.GetAsync(phone.UserId, Arg.Any<CancellationToken>())
@@ -180,18 +128,13 @@ namespace Users.Application.Test
             result.ErrorCode.Should().Be(exception.HResult.ToString());
             result.Description.Should().Be(exception.ToString());
 
-            await _store
+             await _store
                 .Received(1)
                 .GetAsync(phone.UserId, Arg.Any<CancellationToken>());
-            
             
             _mapper
                 .DidNotReceive()
                 .Map(Arg.Any<Domain.Common.Phone>());
-
-            await _store
-                .DidNotReceive()
-                .SaveAsync(Arg.Any<IUserAggregationRoot>(), Arg.Any<CancellationToken>());
         }
     }
 }
