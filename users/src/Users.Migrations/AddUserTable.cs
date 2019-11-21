@@ -24,7 +24,13 @@ namespace Users.Migrations
 
         public override void Down()
         {
-            Delete.Table("Phone");
+            Alter.Table("Phones")
+                .AlterColumn("UserId").AsGuid();
+
+            Alter.Table("Addresses")
+                .AlterColumn("UserId").AsGuid();
+            
+            Delete.Table("Users");
         }
     }
 }
