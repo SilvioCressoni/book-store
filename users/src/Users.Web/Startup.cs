@@ -9,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using NHibernate;
 using NHibernate.Cfg;
 using Npgsql;
-using StackExchange.Profiling;
 using Users.Application.Contracts.Response;
 using Users.Application.Mapper;
 using Users.Application.Operations;

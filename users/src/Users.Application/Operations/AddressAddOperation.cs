@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using StackExchange.Profiling;
 using Users.Application.Contracts.Request;
 using Users.Application.Contracts.Response;
 using Users.Application.Mapper;

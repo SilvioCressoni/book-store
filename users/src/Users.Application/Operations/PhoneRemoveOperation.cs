@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Users.Application.Contracts.Request;
-using Users.Application.Contracts.Response;
 using Users.Domain;
 
 namespace Users.Application.Operations
