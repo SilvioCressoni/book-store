@@ -20,13 +20,12 @@ namespace Users.Web
                 {
                     config
                         .AddJsonFile("appsettings.json", optional: false)
-                        .AddEnvironmentVariables("USR_")
+                        .AddEnvironmentVariables()
                         .AddCommandLine(args);
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
-                        .UseUrls("http://*:5100")
                         .UseLinuxTransport()
                         .UseStartup<Startup>();
                 });

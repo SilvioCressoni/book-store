@@ -50,7 +50,7 @@ namespace Users.Migrations
                 Usage();
                 return;
             }
-            
+            WriteLine($"using CS: {connectionString}");
             EnsureDatabase(connectionString);
             RunMigrations(connectionString, migration.Value, mode);
         }
