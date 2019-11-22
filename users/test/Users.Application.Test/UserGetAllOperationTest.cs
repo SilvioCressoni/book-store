@@ -41,7 +41,7 @@ namespace Users.Application.Test
         }
 
         [Fact]
-        public void Create_Should_Throw_When_StoreIsNull()
+        public void Create_Should_Throw_When_StoreIsNull()    
             => Throws<ArgumentNullException>(() => new UserGetAllOperation(null, _logger, _mapper));
         
         [Fact]
@@ -52,6 +52,54 @@ namespace Users.Application.Test
         public void Create_Should_Throw_When_MapperIsNull()
             => Throws<ArgumentNullException>(() => new UserGetAllOperation(_repository, _logger, null));
 
+        [Fact]
+        public async Task Execute_Should_ReturnError_When_TakeIsLessThenZero()
+        {
+            var request = _fixture.Build<UserGetAll>()
+                .With(x => x.Take, -1)
+                .Create();
+
+            var result = await _operation.ExecuteAsync(request, CancellationToken.None);
+
+            result.IsSuccess.Should().BeFalse();
+            result.Value.Should().BeNull();
+            result.Should().BeOfType<ErrorResult>();
+            result.ErrorCode.Should().Be(Domain.DomainError.GetError.InvalidTake.ErrorCode);
+            result.Description.Should().Be(Domain.DomainError.GetError.InvalidTake.Description);
+
+            _repository
+                .Received(0)
+                .GetAll(request.Skip, request.Take);
+
+            _mapper
+                .Received(0)
+                .Map(Arg.Any<Domain.Common.User>());
+        }
+        
+        [Fact]
+        public async Task Execute_Should_ReturnError_When_SkipIsLessThenZero()
+        {
+            var request = _fixture.Build<UserGetAll>()
+                .With(x => x.Skip, -1)
+                .Create();
+
+            var result = await _operation.ExecuteAsync(request, CancellationToken.None);
+
+            result.IsSuccess.Should().BeFalse();
+            result.Value.Should().BeNull();
+            result.Should().BeOfType<ErrorResult>();
+            result.ErrorCode.Should().Be(Domain.DomainError.GetError.InvalidSkip.ErrorCode);
+            result.Description.Should().Be(Domain.DomainError.GetError.InvalidSkip.Description);
+
+            _repository
+                .Received(0)
+                .GetAll(request.Skip, request.Take);
+
+            _mapper
+                .Received(0)
+                .Map(Arg.Any<Domain.Common.User>());
+        }
+        
         [Fact]
         public async Task Execute_Should_ReturnOk()
         {
@@ -79,31 +127,5 @@ namespace Users.Application.Test
                 .Received(users.Count)
                 .Map(Arg.Any<Domain.Common.User>());
         }
-
-        //[Fact]
-        //public async Task Execute_Should_ReturnError_When_ThrowException()
-        //{
-        //    var exception = _fixture.Create<Exception>();
-        //    var request = _fixture.Create<UserGetAll>();
-
-        //    _repository.GetAll(request.Skip, request.Take)
-        //        .Throws(exception);
-
-        //    var result = await _operation.ExecuteAsync(request, CancellationToken.None);
-
-        //    result.IsSuccess.Should().BeFalse();
-        //    result.Value.Should().BeNull();
-        //    result.Should().BeOfType<ErrorResult>();
-        //    result.ErrorCode.Should().Be(exception.HResult.ToString());
-        //    result.Description.Should().Be(exception.ToString());
-
-        //     _repository
-        //        .Received(1)
-        //        .GetAll(request.Skip, request.Take);
-
-        //    _mapper
-        //        .DidNotReceive()
-        //        .Map(Arg.Any<Domain.Common.User>());
-        //}
     }
 }

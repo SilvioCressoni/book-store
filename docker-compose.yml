@@ -21,6 +21,11 @@ services:
     container_name: users-book-store
     ports:
       - 5100:5100
+    environment:
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_HTTPS_PORT: 5100
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "BookStoreUsers@123"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/users-book-store.pfx -v ${HOME}/.aspnet/https:/https/ mcr.microsoft.com/dotnet/core/users-book-store:users-book-store
     depends_on:
       - postgres
       - users-migrations

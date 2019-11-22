@@ -30,9 +30,8 @@ namespace Users.Application.Operations
 
         public ValueTask<Result> ExecuteAsync(UserGetAll operation, CancellationToken cancellation = default)
         {
-            var scope = _logger.BeginScope("Get All user. [Take: {0}][Skip: {1}]", 
-                operation.Take, operation.Skip);
-            try
+            using (_logger.BeginScope("Get All user. [Take: {0}][Skip: {1}]",
+                operation.Take, operation.Skip))
             {
                 if (operation.Take < 0)
                 {
@@ -54,15 +53,6 @@ namespace Users.Application.Operations
                 var collection = new UserCollection(_repository, operation.Skip, operation.Take, _mapper);
                 _logger.LogInformation("GET All user with success");
                 return new ValueTask<Result>(Result.Ok<IEnumerable<User>>(collection));
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Exception: ");
-                return new ValueTask<Result>(Result.Fail(e));
-            }
-            finally
-            {
-                scope.Dispose();
             }
         }
 
