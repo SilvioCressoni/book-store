@@ -1,6 +1,7 @@
 version: "3"
 volumes:
   postgres-store:
+  users-volume:
 services:
   postgres:
     image: postgres
@@ -13,19 +14,25 @@ services:
       - "postgres-store:/var/lib/postgresql/data"
   users-migrations:
     build: ./users/src/Users.Migrations
-    container_name: users--migrations-book-store
+    container_name: users-migrations-book-store
+    environment:
+      ConnectionString: "Server=postgres;Database=bookstoreuser;User Id=postgres;Password=BookStore@123;"
+    volumes:
+      - "users-volume:/var/output"
+    entrypoint: /bin/sh -c "rm -f /var/output/migrator.txt && dockerize -timeout 60s -wait tcp://postgres:5432 sh /docker-entrypoint.sh"
     depends_on:
       - postgres
   users:
     build: ./users
     container_name: users-book-store
-    ports:
-      - 5100:5100
+    entrypoint: dockerize -timeout 60s -wait file:///var/output/migrator.txt dotnet /app/Users.Web.dll
     environment:
-      ASPNETCORE_URLS: "https://+;http://+"
-      ASPNETCORE_HTTPS_PORT: 5100
-      ASPNETCORE_Kestrel__Certificates__Default__Password: "BookStoreUsers@123"
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/users-book-store.pfx -v ${HOME}/.aspnet/https:/https/ mcr.microsoft.com/dotnet/core/users-book-store:users-book-store
+       ASPNETCORE_ENVIRONMENT: "Development"
+       ConnectionStrings__Postgres: "Server=postgres;Database=bookstoreuser;User Id=postgres;Password=BookStore@123;"
+    volumes:
+      - "users-volume:/var/output"
+    ports:
+      - '5100:80'
     depends_on:
       - postgres
       - users-migrations
