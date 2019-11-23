@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using Autofac;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using FluentNHibernate.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,7 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NHibernate;
 using NHibernate.Cfg;
+using NJsonSchema;
 using Npgsql;
+using NSwag;
+using NSwag.Generation;
 using Users.Application.Contracts.Response;
 using Users.Application.Mapper;
 using Users.Application.Operations;
@@ -26,7 +31,20 @@ namespace Users.Web
         {
             services.AddControllers();
             services.AddMvc();
-            services.AddSwaggerDocument();
+            services.AddSwaggerDocument(config => { 
+                config.PostProcess = document =>
+                {
+                    document.Info.Version = "v1";
+                    document.Info.Title = "Users API";
+                    document.Info.Description = "User Manager";
+                    document.Info.TermsOfService = "None";
+                    document.Schemes = new List<OpenApiSchema>
+                    {
+                        OpenApiSchema.Http,
+                        OpenApiSchema.Https
+                    };
+                };
+            });
             //services.AddGrpc();
 
             services.AddMiniProfiler(options =>
@@ -145,8 +163,10 @@ namespace Users.Web
             app.UseHttpsRedirection();
             app.UseRouting();
             
+            app.UseStaticFiles();
             app.UseOpenApi();
             app.UseSwaggerUi3();
+            
             app.UseMiniProfiler();
 
             app.UseEndpoints(endpoints =>

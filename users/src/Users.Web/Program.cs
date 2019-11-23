@@ -26,6 +26,9 @@ namespace Users.Web
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
+#if DEBUG
+                        .UseUrls("http://+:5100;https://+:5101;")
+#endif
                         .UseLinuxTransport()
                         .UseStartup<Startup>();
                 });
