@@ -108,7 +108,7 @@ namespace Users.Domain
         #endregion
 
         private static readonly Regex emailValidator = new Regex(
-            @"/^(([^<>()\[\]\\.,;:\s@""]+ (\.[^<>()\[\]\\.,;:\s@""]+)*)|("".+""))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/",
+            @"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$",
             RegexOptions.Compiled);
 
         public Result Create(string email, string firstName, string lastName, DateTime birthDay)
@@ -143,12 +143,6 @@ namespace Users.Domain
                 return UserError.InvalidLastNames;
             }
 
-            var year = DateTime.Now.Year - birthDay.Year;
-            if (year < 18)
-            {
-                return UserError.InvalidBirthDay;
-            }
-
             Apply(new CreateEvent(email, firstName, lastName, birthDay));
             return Result.Ok();
         }
@@ -173,12 +167,6 @@ namespace Users.Domain
             if (lastName.Length > 100)
             {
                 return UserError.InvalidLastNames;
-            }
-
-            var year = DateTime.Now.Year - birthDay.Year;
-            if (year < 18)
-            {
-                return UserError.InvalidBirthDay;
             }
 
             Apply(new UpdateEvent(firstName, lastName, birthDay));

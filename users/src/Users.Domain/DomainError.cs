@@ -35,8 +35,6 @@ namespace Users.Domain
             public static ErrorResult MissingLastNames { get; } = Fail("USR002", "Missing last names");
             public static ErrorResult InvalidLastNames { get; } = Fail("USR003", "Invalid last names length");
 
-            public static ErrorResult InvalidBirthDay { get; } = Fail("USR004", "Invalid birth day");
-
             public static ErrorResult UserNotFound { get; } = Fail("USR005", "User not found");
 
             public static ErrorResult EmailAlreadyExist { get; } = Fail("USR006", "Email already exist");
