@@ -29,11 +29,13 @@ namespace Users.Infrastructure.Mapper
                 .Not.Nullable();
 
             HasMany(x => x.Addresses)
-                .LazyLoad();
+                .LazyLoad()
+                .Cascade.All();
 
             HasMany(x => x.Phones)
                 .LazyLoad()
-                .AsSet();
+                .AsSet()
+                .Cascade.All();;
         }
     }
 }

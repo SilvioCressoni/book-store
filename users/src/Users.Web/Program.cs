@@ -27,7 +27,7 @@ namespace Users.Web
                 {
                     webBuilder
 #if DEBUG
-                        .UseUrls("http://+:5100;https://+:5101;")
+                        .UseUrls("https://+:5100;http://+:5100;")
 #endif
                         .UseLinuxTransport()
                         .UseStartup<Startup>();

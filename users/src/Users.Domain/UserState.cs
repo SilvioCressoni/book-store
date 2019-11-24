@@ -27,7 +27,8 @@ namespace Users.Domain
         {
             _user.Phones.Add(new Phone
             {
-                Number = @event.Number
+                Number = @event.Number,
+                User = _user
             });
         }
 
@@ -42,7 +43,8 @@ namespace Users.Domain
             {
                 Line = @event.Line,
                 Number = @event.Number,
-                PostCode =  @event.PostCode
+                PostCode =  @event.PostCode,
+                User = _user
             });
         }
 

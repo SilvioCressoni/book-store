@@ -18,7 +18,8 @@ namespace Users.Infrastructure.Mapper
                 .Length(15);
 
             References(x => x.User)
-                .LazyLoad();
+                .LazyLoad()
+                .Column("UserId");
         }
     }
 }
