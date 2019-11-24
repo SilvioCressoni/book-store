@@ -75,7 +75,7 @@ namespace Users.Web.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -133,7 +133,7 @@ namespace Users.Web.Controllers
 
         #region Phone
         
-        [HttpGet("/{id}/phone")]
+        [HttpGet("{id}/phone")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -163,7 +163,7 @@ namespace Users.Web.Controllers
             return BadRequest(result);
         }
         
-        [HttpPost("/{id}/phone")]
+        [HttpPost("{id}/phone")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -197,7 +197,7 @@ namespace Users.Web.Controllers
             return BadRequest(result);
         }
 
-        [HttpDelete("/{id}/phone/{number}")]
+        [HttpDelete("{id}/phone/{number}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -229,7 +229,7 @@ namespace Users.Web.Controllers
         #endregion
 
         #region Address
-        [HttpGet("/{id}/address")]
+        [HttpGet("{id}/address")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -259,7 +259,7 @@ namespace Users.Web.Controllers
             return BadRequest(result);
         }
         
-        [HttpPost("/{id}/address")]
+        [HttpPost("{id}/address")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -292,7 +292,7 @@ namespace Users.Web.Controllers
             return BadRequest(result);
         }
 
-        [HttpDelete("/{id}/address/{addressId}")]
+        [HttpDelete("{id}/address/{addressId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

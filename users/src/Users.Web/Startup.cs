@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Autofac;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using FluentNHibernate.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,10 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NHibernate;
 using NHibernate.Cfg;
-using NJsonSchema;
 using Npgsql;
 using NSwag;
-using NSwag.Generation;
 using Users.Application.Contracts.Response;
 using Users.Application.Mapper;
 using Users.Application.Operations;
@@ -30,7 +27,9 @@ namespace Users.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(option => { option.JsonSerializerOptions.IgnoreNullValues = true; });
+            
             services.AddSwaggerDocument(config => { 
                 config.PostProcess = document =>
                 {
