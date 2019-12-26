@@ -7,8 +7,9 @@ using Users.Application.Contracts;
 using Users.Application.Contracts.Request;
 using Users.Application.Operations;
 using Users.Domain;
-
-using UserRequest = Users.Application.Contracts.Response.User;
+using UserResponse = Users.Application.Contracts.Response.User;
+using AddressResponse = Users.Application.Contracts.Response.Address;
+using PhoneResponse = Users.Application.Contracts.Response.Phone;
 
 namespace Users.Web.Controllers
 {
@@ -20,7 +21,7 @@ namespace Users.Web.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Create([FromBody] UserRequest user, [FromServices] UserCreateOperation operation)
+        public async Task<IActionResult> Create([FromBody] UserResponse user, [FromServices] UserCreateOperation operation)
         {
             var result = await operation.ExecuteAsync(new UserAdd
             {
@@ -48,17 +49,17 @@ namespace Users.Web.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> UpdateUser([FromRoute]Guid id, [FromBody] UserRequest user, [FromServices] UserUpdateOperation operation)
+        public async Task<IActionResult> UpdateUser([FromRoute]Guid id, [FromBody] UserResponse user, [FromServices] UserUpdateOperation operation)
         {
             var result = await operation.ExecuteAsync(new UserUpdate
             {
                 Id = id,
                 FirstName = user.FirstName,
                 LastNames = user.LastNames,
-                BirthDay = user.BirthDay
+                BirthDate = user.BirthDay
             });
 
-            if (result is OkResult<User> ok)
+            if (result is OkResult<UserResponse> ok)
             {
                 return Ok(ok.Value);
             }
@@ -88,7 +89,7 @@ namespace Users.Web.Controllers
                 Id = id
             });
 
-            if (result is OkResult<User> ok)
+            if (result is OkResult<UserResponse> ok)
             {
                 return Ok(ok.Value);
             }
@@ -110,15 +111,15 @@ namespace Users.Web.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> GetAllUser([FromQuery]int? skip, [FromQuery]int? take, [FromServices] UserGetAllOperation operation)
+        public async Task<IActionResult> GetAllUser([FromQuery] int? skip, [FromQuery] int? take, [FromServices] UserGetAllOperation operation)
         {
             var result = await operation.ExecuteAsync(new UserGetAll
             {
                 Skip = skip ?? 0,
-                Take =  take ?? 0
+                Take = take ?? 0
             });
 
-            if (result is OkResult<IEnumerable<User>> ok)
+            if (result is OkResult<IEnumerable<UserResponse>> ok)
             {
                 return Ok(ok.Value);
             }
@@ -146,7 +147,7 @@ namespace Users.Web.Controllers
                 UserId = id,
             });
 
-            if (result is OkResult<IEnumerable<Phone>> ok)
+            if (result is OkResult<IEnumerable<PhoneResponse>> ok)
             {
                 return Ok(ok.Value);
             }
@@ -169,7 +170,7 @@ namespace Users.Web.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> AddPhone([FromRoute]Guid id, [FromBody] Phone phone, [FromServices] PhoneAddOperation operation)
+        public async Task<IActionResult> AddPhone([FromRoute]Guid id, [FromBody] PhoneResponse phone, [FromServices] PhoneAddOperation operation)
         {
             var result = await operation.ExecuteAsync(new PhoneAdd
             {
@@ -177,7 +178,7 @@ namespace Users.Web.Controllers
                 Number = phone.Number
             });
 
-            if (result is OkResult<Phone> ok)
+            if (result is OkResult<PhoneResponse> ok)
             {
                 return Ok(new Phone
                 {
@@ -242,7 +243,7 @@ namespace Users.Web.Controllers
                 UserId = id,
             });
 
-            if (result is OkResult<IEnumerable<Address>> ok)
+            if (result is OkResult<IEnumerable<AddressResponse>> ok)
             {
                 return Ok(ok.Value);
             }
@@ -265,7 +266,7 @@ namespace Users.Web.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> AddAddress([FromRoute]Guid id, [FromBody] Address address, [FromServices] AddressAddOperation operation)
+        public async Task<IActionResult> AddAddress([FromRoute]Guid id, [FromBody] AddressResponse address, [FromServices] AddressAddOperation operation)
         {
             var result = await operation.ExecuteAsync(new AddressAdd
             {
@@ -275,7 +276,7 @@ namespace Users.Web.Controllers
                 PostCode = address.PostCode
             });
 
-            if (result is OkResult<Address> ok)
+            if (result is OkResult<AddressResponse> ok)
             {
                 return Ok(ok.Value);
             }

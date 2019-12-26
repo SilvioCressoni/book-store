@@ -3,11 +3,11 @@ using Users.Domain;
 
 namespace Users.Web.Mappers
 {
-    public class RemovePhoneReplayMapper : IMapper<Result, RemovePhoneReplay>
+    public class RemoveAddressReplayMapper : IMapper<Result, RemoveAddressReplay>
     {
-        public RemovePhoneReplay Map(Result source)
+        public RemoveAddressReplay Map(Result source)
         {
-            return new RemovePhoneReplay
+            return new RemoveAddressReplay
             {
                 IsSuccess = source.IsSuccess,
                 Description = source.Description,

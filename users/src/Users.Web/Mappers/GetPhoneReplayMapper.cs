@@ -4,22 +4,22 @@ using Users.Application.Mapper;
 using Users.Domain;
 using PhoneApplication = Users.Application.Contracts.Response.Phone;
 
-namespace Users.Web
+namespace Users.Web.Mappers
 {
     public class GetPhoneReplayMapper : IMapper<Result, GetPhoneReplay>
     {
-        private readonly IMapper<PhoneApplication, Phone> _phoneMapper;
+        private readonly IMapper<PhoneApplication, Phone> _mapper;
 
-        public GetPhoneReplayMapper(IMapper<PhoneApplication, Phone> phoneMapper)
+        public GetPhoneReplayMapper(IMapper<PhoneApplication, Phone> mapper)
         {
-            _phoneMapper = phoneMapper ?? throw new ArgumentNullException(nameof(phoneMapper));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public GetPhoneReplay Map(Result source)
         {
             var replay = new GetPhoneReplay
             {
-                IsSuccess = false,
+                IsSuccess = source.IsSuccess,
                 Description = source.Description,
                 ErrorCode = source.ErrorCode
             };
@@ -28,7 +28,7 @@ namespace Users.Web
             {
                 foreach (var phone in okResult.Value)
                 {
-                    replay.Value.Add(_phoneMapper.Map(phone));
+                    replay.Value.Add(_mapper.Map(phone));
                 }
             }
 

@@ -1,29 +1,29 @@
 ﻿using System;
 using Users.Application.Mapper;
 using Users.Domain;
-using PhoneApplication = Users.Application.Contracts.Response.Phone;
+using AddressApplication = Users.Application.Contracts.Response.Address;
 
 namespace Users.Web.Mappers
 {
-    public class AddPhoneReplayMapper : IMapper<Result, AddPhoneReplay>
+    public class AddAddressReplayMapper : IMapper<Result, AddAddressReplay>
     {
-        private readonly IMapper<PhoneApplication, Phone> _mapper;
+        private readonly IMapper<AddressApplication, Address> _mapper;
 
-        public AddPhoneReplayMapper(IMapper<PhoneApplication, Phone> mapper)
+        public AddAddressReplayMapper(IMapper<AddressApplication, Address> mapper)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public AddPhoneReplay Map(Result source)
+        public AddAddressReplay Map(Result source)
         {
-            var replay = new AddPhoneReplay
+            var replay = new AddAddressReplay
             {
                 IsSuccess = source.IsSuccess,
                 Description = source.Description,
                 ErrorCode = source.ErrorCode
             };
 
-            if (source is OkResult<PhoneApplication> okResult)
+            if (source is OkResult<AddressApplication> okResult)
             {
                 replay.Value = _mapper.Map(okResult.Value);
             }

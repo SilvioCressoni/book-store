@@ -22,6 +22,7 @@ namespace Users.Domain
             public static ErrorResult InvalidAddressId { get; } = Fail("USR205", "Invalid address Id");
             public static ErrorResult AddressNotFound { get; } = Fail("USR206", "Address not found");
             public static ErrorResult AddressAlreadyExist { get; } = Fail("USR207", "Address already exist");
+            public static ErrorResult InvalidUserId { get; } = Fail("USR208", "Invalid Id, it should be a Guid or UUID");
         }
 
         public static class UserError

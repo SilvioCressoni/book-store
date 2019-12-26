@@ -37,7 +37,7 @@ namespace Users.Application.Operations
                     return DomainError.UserError.UserNotFound;
                 }
 
-                if (root.Update(operation.FirstName, operation.LastNames, operation.BirthDay) is ErrorResult error)
+                if (root.Update(operation.FirstName, operation.LastNames, operation.BirthDate) is ErrorResult error)
                 {
                     _logger.LogInformation("Error [ErrorCode: {0}]", error.ErrorCode);
                     return error;

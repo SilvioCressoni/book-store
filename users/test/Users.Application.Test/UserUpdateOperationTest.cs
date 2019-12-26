@@ -89,7 +89,7 @@ namespace Users.Application.Test
 
             var fail = _fixture.Create<ErrorResult>();
 
-            root.Update(request.FirstName, request.LastNames, request.BirthDay)
+            root.Update(request.FirstName, request.LastNames, request.BirthDate)
                 .Returns(fail);
 
             var result = await _operation.ExecuteAsync(request, CancellationToken.None);
@@ -104,7 +104,7 @@ namespace Users.Application.Test
 
             root
                 .Received(1)
-                .Update(request.FirstName, request.LastNames, request.BirthDay);
+                .Update(request.FirstName, request.LastNames, request.BirthDate);
             
             _mapper
                 .DidNotReceive()
@@ -125,7 +125,7 @@ namespace Users.Application.Test
             _store.GetAsync(request.Id, Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult(root));
 
-            root.Update(request.FirstName, request.LastNames, request.BirthDay)
+            root.Update(request.FirstName, request.LastNames, request.BirthDate)
                 .Returns(Result.Ok());
 
             _mapper.Map(Arg.Any<Domain.Common.User>())
@@ -143,7 +143,7 @@ namespace Users.Application.Test
 
             root
                 .Received(1)
-                .Update(request.FirstName, request.LastNames, request.BirthDay);
+                .Update(request.FirstName, request.LastNames, request.BirthDate);
             
             _mapper
                 .Received(1)

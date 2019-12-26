@@ -26,6 +26,9 @@ namespace Users.Web.Modules
                 .SingleInstance();
 
             #region Grpc Mapper
+
+            #region Phone
+
             builder.RegisterType<GrpcPhoneMapper>()
                 .As<IMapper<PhoneResponse, Phone>>()
                 .SingleInstance();
@@ -41,6 +44,49 @@ namespace Users.Web.Modules
             builder.RegisterType<RemovePhoneReplayMapper>()
                 .As<IMapper<Result, RemovePhoneReplay>>()
                 .SingleInstance();
+
+            #endregion
+
+            #region Address
+
+            builder.RegisterType<GrpcAddressMapper>()
+                .As<IMapper<PhoneResponse, Phone>>()
+                .SingleInstance();
+
+            builder.RegisterType<GetAddressesReplayMapper>()
+                .As<IMapper<Result, GetAddressesReplay>>()
+                .SingleInstance();
+
+            builder.RegisterType<AddAddressReplayMapper>()
+                .As<IMapper<Result, AddAddressReplay>>()
+                .SingleInstance();
+
+            builder.RegisterType<RemoveAddressReplayMapper>()
+                .As<IMapper<Result, RemoveAddressReplay>>()
+                .SingleInstance();
+
+            #endregion
+
+            #region User
+
+            builder.RegisterType<GrpcUserMapper>()
+                .As<IMapper<UserResponse, User>>()
+                .SingleInstance();
+
+            builder.RegisterType<AddUserReplayMapper>()
+                .As<IMapper<Result, AddUserReplay>>()
+                .SingleInstance();
+
+            builder.RegisterType<GetUserReplayMapper>()
+                .As<IMapper<Result, GetUserReplay>>()
+                .SingleInstance();
+
+            builder.RegisterType<UpdateUserReplayMapper>()
+                .As<IMapper<Result, UpdateUserReplay>>()
+                .SingleInstance();
+
+            #endregion
+
             #endregion
         }
     }

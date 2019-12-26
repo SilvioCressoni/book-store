@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +40,7 @@ namespace Users.Web
             });
 
             services.AddGrpc();
+            services.AddMemoryCache(opt => opt.ExpirationScanFrequency = TimeSpan.FromMinutes(5));
             services.AddMiniProfiler(options =>
             {
                 options.RouteBasePath = "/profiler";
@@ -65,7 +67,6 @@ namespace Users.Web
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
             app.UseRouting();
             
             app.UseStaticFiles();
