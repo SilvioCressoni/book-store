@@ -1,22 +1,12 @@
 using System.Collections.Generic;
 using Autofac;
-using FluentNHibernate.Cfg;
-using FluentNHibernate.Cfg.Db;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NHibernate;
-using NHibernate.Cfg;
-using Npgsql;
 using NSwag;
-using Users.Application.Contracts.Response;
-using Users.Application.Mapper;
-using Users.Application.Operations;
-using Users.Domain;
-using Users.Infrastructure;
-using Users.Infrastructure.Mapper;
+using Users.Web.Modules;
+using Users.Web.Services;
 
 namespace Users.Web
 {
@@ -27,8 +17,11 @@ namespace Users.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddMvc()
-                .AddJsonOptions(option => { option.JsonSerializerOptions.IgnoreNullValues = true; });
+            services.AddMvcCore()
+                .AddJsonOptions(option =>
+                {
+                    option.JsonSerializerOptions.IgnoreNullValues = true;
+                });
             
             services.AddSwaggerDocument(config => { 
                 config.PostProcess = document =>
@@ -44,8 +37,8 @@ namespace Users.Web
                     };
                 };
             });
-            //services.AddGrpc();
 
+            services.AddGrpc();
             services.AddMiniProfiler(options =>
             {
                 options.RouteBasePath = "/profiler";
@@ -58,96 +51,10 @@ namespace Users.Web
         // Don't build the container; that gets done for you by the factory.
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.Register(provider => Fluently.Configure(new Configuration()
-                        .SetNamingStrategy(new PostgresNamingStrategy()))
-                .Database(() =>
-                {
-                    var configure = provider.Resolve<IConfiguration>();
-                    var connection = configure.GetConnectionString("Postgres");
-                    
-                    var builder = new NpgsqlConnectionStringBuilder(connection)
-                    {
-                        ApplicationName = "BookStoreUser"
-                    };
-
-                    return PostgreSQLConfiguration.PostgreSQL82.ConnectionString(builder.ToString());
-                })
-                .Mappings(m => m.FluentMappings
-                    .Add<PhoneMap>()
-                    .Add<AddressMap>()
-                    .Add<UserMap>())
-                .ExposeConfiguration(configuration =>
-                {
-                    configuration.SetProperty(Environment.Hbm2ddlKeyWords, "auto-quote");
-                })
-                .BuildSessionFactory())
-                .As<ISessionFactory>()
-                .SingleInstance();
-            
-            builder.Register(provider => provider.Resolve<ISessionFactory>().OpenSession())
-                .AsSelf()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<UserRepository>()
-                .As<IUserRepository>()
-                .As<IReadOnlyUserRepository>()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<UserAggregateStore>()
-                .As<IUserAggregateStore>()
-                .InstancePerLifetimeScope();
-
-            builder.RegisterType<AddressMapper>()
-                .As<IMapper<Domain.Common.Address, Address>>()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<PhoneMapper>()
-                .As<IMapper<Domain.Common.Phone, Phone>>()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<UserMapper>()
-                .As<IMapper<Domain.Common.User, User>>()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<PhoneAddOperation>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<PhoneRemoveOperation>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<PhoneGetOperation>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-
-            builder.RegisterType<AddressAddOperation>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<AddressRemoveOperation>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<AddressGetOperation>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-
-            builder.RegisterType<UserCreateOperation>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<UserUpdateOperation>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<UserGetOperation>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
-            
-            builder.RegisterType<UserGetAllOperation>()
-                .AsSelf()
-                .InstancePerLifetimeScope();
+            builder.RegisterModule<AggregationModule>()
+                .RegisterModule<MapperModule>()
+                .RegisterModule<OperationModule>()
+                .RegisterModule<RepositoryModule>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -169,6 +76,7 @@ namespace Users.Web
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGrpcService<UserService>();
                 endpoints.MapControllers();
             });
         }

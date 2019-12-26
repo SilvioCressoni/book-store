@@ -9,7 +9,7 @@ service Users {
   rpc AddPhone(AddPhoneRequest) returns(AddPhoneReplay) { }
   rpc RemovePhone(RemovePhoneRequest) returns(RemovePhoneReplay) { }
 
-  rpc GetAddresses(GetAddressRequest) returns(GetAddressReplay) { }
+  rpc GetAddresses(GetAddressesRequest) returns(GetAddressesReplay) { }
   rpc AddAddress(AddAddressRequest) returns(AddAddressReplay) { }
   rpc RemoveAddress(RemoveAddressRequest) returns(RemoveAddressReplay) { }
 
@@ -74,11 +74,11 @@ message Address {
     string post_code = 4;
 }
 
-message GetAddressRequest {
+message GetAddressesRequest {
     string user_id = 1;
 }
 
-message GetAddressReplay {
+message GetAddressesReplay {
     bool is_success = 1;
     string error_code = 2;
     string description = 3;

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Users.Application.Contracts;
 using Users.Application.Contracts.Request;
-using Users.Application.Contracts.Response;
 using Users.Application.Operations;
 using Users.Domain;
 

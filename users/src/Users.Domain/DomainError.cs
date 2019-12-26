@@ -38,6 +38,7 @@ namespace Users.Domain
             public static ErrorResult UserNotFound { get; } = Fail("USR005", "User not found");
 
             public static ErrorResult EmailAlreadyExist { get; } = Fail("USR006", "Email already exist");
+            public static ErrorResult InvalidUserId { get; } = Fail("USR007", "Invalid User Id, it should be a Guid or UUID");
         }
 
         public static class GetError
