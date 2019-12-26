@@ -1,6 +1,11 @@
 ﻿using Autofac;
 using Users.Application.Mapper;
+using Users.Domain;
 using Users.Web.Mappers;
+
+using AddressResponse = Users.Application.Contracts.Response.Address;
+using PhoneResponse = Users.Application.Contracts.Response.Phone;
+using UserResponse = Users.Application.Contracts.Response.User;
 
 namespace Users.Web.Modules
 {
@@ -9,20 +14,33 @@ namespace Users.Web.Modules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<AddressMapper>()
-                .As<IMapper<Domain.Common.Address, Address>>()
+                .As<IMapper<Domain.Common.Address, AddressResponse>>()
                 .SingleInstance();
 
             builder.RegisterType<PhoneMapper>()
-                .As<IMapper<Domain.Common.Phone, Phone>>()
+                .As<IMapper<Domain.Common.Phone, PhoneResponse>>()
                 .SingleInstance();
 
             builder.RegisterType<UserMapper>()
-                .As<IMapper<Domain.Common.User, User>>()
+                .As<IMapper<Domain.Common.User, UserResponse>>()
                 .SingleInstance();
 
             #region Grpc Mapper
+            builder.RegisterType<GrpcPhoneMapper>()
+                .As<IMapper<PhoneResponse, Phone>>()
+                .SingleInstance();
 
+            builder.RegisterType<GetPhoneReplayMapper>()
+                .As<IMapper<Result, GetPhoneReplay>>()
+                .SingleInstance();
 
+            builder.RegisterType<AddPhoneReplayMapper>()
+                .As<IMapper<Result, AddPhoneReplay>>()
+                .SingleInstance();
+
+            builder.RegisterType<RemovePhoneReplayMapper>()
+                .As<IMapper<Result, RemovePhoneReplay>>()
+                .SingleInstance();
             #endregion
         }
     }

@@ -8,6 +8,8 @@ using Users.Application.Contracts.Request;
 using Users.Application.Operations;
 using Users.Domain;
 
+using UserRequest = Users.Application.Contracts.Response.User;
+
 namespace Users.Web.Controllers
 {
     [Route("/api/v1/user")]
@@ -18,7 +20,7 @@ namespace Users.Web.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Create([FromBody] User user, [FromServices] UserCreateOperation operation)
+        public async Task<IActionResult> Create([FromBody] UserRequest user, [FromServices] UserCreateOperation operation)
         {
             var result = await operation.ExecuteAsync(new UserAdd
             {
@@ -46,7 +48,7 @@ namespace Users.Web.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> UpdateUser([FromRoute]Guid id, [FromBody] User user, [FromServices] UserUpdateOperation operation)
+        public async Task<IActionResult> UpdateUser([FromRoute]Guid id, [FromBody] UserRequest user, [FromServices] UserUpdateOperation operation)
         {
             var result = await operation.ExecuteAsync(new UserUpdate
             {

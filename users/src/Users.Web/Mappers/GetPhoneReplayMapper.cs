@@ -12,37 +12,27 @@ namespace Users.Web
 
         public GetPhoneReplayMapper(IMapper<PhoneApplication, Phone> phoneMapper)
         {
-            _phoneMapper = phoneMapper;
+            _phoneMapper = phoneMapper ?? throw new ArgumentNullException(nameof(phoneMapper));
         }
 
         public GetPhoneReplay Map(Result source)
         {
-            switch (source)
+            var replay = new GetPhoneReplay
             {
-                case ErrorResult error:
-                    return new GetPhoneReplay
-                    {
-                        IsSuccess = false,
-                        Description = error.Description,
-                        ErrorCode = error.ErrorCode
-                    };
-                case OkResult<IEnumerable<PhoneApplication>> okResult:
+                IsSuccess = false,
+                Description = source.Description,
+                ErrorCode = source.ErrorCode
+            };
+
+            if (source is OkResult<IEnumerable<PhoneApplication>> okResult)
+            {
+                foreach (var phone in okResult.Value)
                 {
-                    var replay = new GetPhoneReplay
-                    {
-                        IsSuccess = true
-                    };
-
-                    foreach (var phone in okResult.Value)
-                    {
-                        replay.Value.Add(_phoneMapper.Map(phone));
-                    }
-
-                    return replay;
+                    replay.Value.Add(_phoneMapper.Map(phone));
                 }
-                default:
-                    throw new NotImplementedException();
             }
+
+            return replay;
         }
     }
 }

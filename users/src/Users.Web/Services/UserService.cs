@@ -58,6 +58,23 @@ namespace Users.Web.Services
             return mapper.Map(DomainError.UserError.InvalidUserId);
         }
 
+        public override async Task<RemovePhoneReplay> RemovePhone(RemovePhoneRequest request, ServerCallContext context)
+        {
+            var operation = _provider.GetRequiredService<PhoneRemoveOperation>();
+            var mapper = _provider.GetRequiredService<IMapper<Result, RemovePhoneReplay>>();
+            if (Guid.TryParse(request.UserId, out var userId))
+            {
+                var result = await operation.ExecuteAsync(new PhoneRemove
+                {
+                    UserId = userId
+                });
+
+                return mapper.Map(result);
+            }
+
+            return mapper.Map(DomainError.UserError.InvalidUserId);
+        }
+
         #endregion
 
     }

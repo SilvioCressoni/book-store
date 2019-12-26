@@ -54,7 +54,6 @@ message AddPhoneReplay {
 
 message RemovePhoneRequest {
   string user_id = 1;
-  string number = 2;
 }
 
 message RemovePhoneReplay {
@@ -118,7 +117,7 @@ message User {
     string id = 1;
     string email = 2;
     string first_name = 3;
-    int32 last_names = 4;
+    string last_names = 4;
     google.protobuf.Timestamp birth_date = 5;
     
     repeated Phone phones = 6;

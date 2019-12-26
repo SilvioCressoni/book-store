@@ -1,11 +1,11 @@
 ﻿using Users.Application.Mapper;
-using PhoneApplication = Users.Application.Contracts.Response.Phone;
+using PhoneResponse = Users.Application.Contracts.Response.Phone;
 
 namespace Users.Web.Mappers
 {
-    public class GrpcPhoneMapper : IMapper<PhoneApplication, Phone>
+    public class GrpcPhoneMapper : IMapper<PhoneResponse, Phone>
     {
-        public Phone Map(PhoneApplication source)
+        public Phone Map(PhoneResponse source)
         {
             return new Phone
             {

@@ -11,31 +11,24 @@ namespace Users.Web
 
         public AddPhoneReplayMapper(IMapper<PhoneApplication, Phone> phoneMapper)
         {
-            _phoneMapper = phoneMapper;
+            _phoneMapper = phoneMapper ?? throw new ArgumentNullException(nameof(phoneMapper));
         }
 
         public AddPhoneReplay Map(Result source)
         {
-            switch (source)
+            var replay = new AddPhoneReplay
             {
-                case ErrorResult error:
-                    return new AddPhoneReplay
-                    {
-                        IsSuccess = false,
-                        Description = error.Description,
-                        ErrorCode = error.ErrorCode
-                    };
-                case OkResult<PhoneApplication> okResult:
-                {
-                    return new AddPhoneReplay
-                    {
-                        IsSuccess = true, 
-                        Value = _phoneMapper.Map(okResult.Value)
-                    };
-                }
-                default:
-                    throw new NotImplementedException();
+                IsSuccess = false,
+                Description = source.Description,
+                ErrorCode = source.ErrorCode
+            };
+
+            if (source is OkResult<PhoneApplication> okResult)
+            {
+                replay.Value = _phoneMapper.Map(okResult.Value);
             }
+
+            return replay;
         }
     }
 }
