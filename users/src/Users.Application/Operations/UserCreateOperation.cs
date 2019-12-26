@@ -36,7 +36,7 @@ namespace Users.Application.Operations
                 var root = _store.Create();
 
                 if (root.Create(operation.Email, operation.FirstName,
-                    operation.LastNames, operation.BirthDay) is ErrorResult error)
+                    operation.LastNames, operation.BirthDate) is ErrorResult error)
                 {
                     _logger.LogInformation("Error [ErrorCode: {0}]", error.ErrorCode);
                     return error;

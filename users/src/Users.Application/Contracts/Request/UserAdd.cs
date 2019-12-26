@@ -7,6 +7,6 @@ namespace Users.Application.Contracts.Request
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastNames { get; set; }
-        public DateTime BirthDay { get; set; }
+        public DateTime BirthDate { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace Users.Web.Controllers
             {
                 FirstName = user.FirstName,
                 LastNames = user.LastNames,
-                BirthDay = user.BirthDay,
+                BirthDate = user.BirthDay,
                 Email = user.Email
             });
 

@@ -67,7 +67,7 @@ namespace Users.Application.Test
 
             var fail = _fixture.Create<ErrorResult>();
 
-            root.Create(request.Email, request.FirstName, request.LastNames, request.BirthDay)
+            root.Create(request.Email, request.FirstName, request.LastNames, request.BirthDate)
                 .Returns(fail);
 
             var result = await _operation.ExecuteAsync(request, CancellationToken.None);
@@ -82,7 +82,7 @@ namespace Users.Application.Test
 
             root
                 .Received(1)
-                .Create(request.Email, request.FirstName, request.LastNames, request.BirthDay);
+                .Create(request.Email, request.FirstName, request.LastNames, request.BirthDate);
             
             await _repository
                 .DidNotReceive()
@@ -106,7 +106,7 @@ namespace Users.Application.Test
             _store.Create()
                 .Returns(root);
             
-            root.Create(request.Email, request.FirstName, request.LastNames, request.BirthDay)
+            root.Create(request.Email, request.FirstName, request.LastNames, request.BirthDate)
                 .Returns(Result.Ok());
 
             _repository.EmailExistAsync(request.Email, Arg.Any<CancellationToken>())
@@ -124,7 +124,7 @@ namespace Users.Application.Test
 
             root
                 .Received(1)
-                .Create(request.Email, request.FirstName, request.LastNames, request.BirthDay);
+                .Create(request.Email, request.FirstName, request.LastNames, request.BirthDate);
 
             await _repository
                 .Received(1)
@@ -149,7 +149,7 @@ namespace Users.Application.Test
             _store.Create()
                 .Returns(root);
 
-            root.Create(request.Email, request.FirstName, request.LastNames, request.BirthDay)
+            root.Create(request.Email, request.FirstName, request.LastNames, request.BirthDate)
                 .Returns(Result.Ok());
             
             _repository.EmailExistAsync(request.Email, Arg.Any<CancellationToken>())
@@ -170,7 +170,7 @@ namespace Users.Application.Test
 
             root
                 .Received(1)
-                .Create(request.Email, request.FirstName, request.LastNames, request.BirthDay);
+                .Create(request.Email, request.FirstName, request.LastNames, request.BirthDate);
 
             await _repository
                 .Received(1)
@@ -194,7 +194,7 @@ namespace Users.Application.Test
             _store.Create()
                 .Returns(root);
             
-            root.Create(request.Email, request.FirstName, request.LastNames, request.BirthDay)
+            root.Create(request.Email, request.FirstName, request.LastNames, request.BirthDate)
                 .Returns(Result.Ok());
             
             var exception = _fixture.Create<Exception>();
@@ -214,7 +214,7 @@ namespace Users.Application.Test
 
             root
                 .Received(1)
-                .Create(request.Email, request.FirstName, request.LastNames, request.BirthDay);
+                .Create(request.Email, request.FirstName, request.LastNames, request.BirthDate);
 
             await _repository
                 .Received(1)

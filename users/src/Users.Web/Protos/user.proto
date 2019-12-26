@@ -2,16 +2,177 @@
 
 option csharp_namespace = "Users.Web";
 
+import "google/protobuf/timestamp.proto";
+
 service Users {
-  rpc PhoneAdd (PhoneRequest) returns (PhoneReplay);
+  rpc GetPhones(GetPhoneRequest) returns(GetPhoneReplay) { }
+  rpc AddPhone(AddPhoneRequest) returns(AddPhoneReplay) { }
+  rpc RemovePhone(RemovePhoneRequest) returns(RemovePhoneReplay) { }
+
+  rpc GetAddresses(GetAddressRequest) returns(GetAddressReplay) { }
+  rpc AddAddress(AddAddressRequest) returns(AddAddressReplay) { }
+  rpc RemoveAddress(RemoveAddressRequest) returns(RemoveAddressReplay) { }
+
+  rpc GetUser(GetUserReplay) returns(GetUserReplay) { }
+  rpc GetUsers(GetUsersRequest) returns(GetUsersReplay) { }
+  rpc AddUsers(AddUserRequest) returns(AddUserReplay) { }
+  rpc UpdateUser(UpdateUserRequest) returns(UpdateUserReplay) { }
+  
 }
 
-message PhoneRequest {
-  string userId = 1;
+/*
+########## Phone ##########
+*/
+
+message Phone {
+  string user_id = 1;
   string number = 2;
 }
 
-message PhoneReplay {
-	string userId = 1;
-	string number = 2;
+message GetPhoneRequest {
+  string userId = 1;
+}
+
+message GetPhoneReplay {
+  bool is_success = 1;
+  string error_code = 2;
+  string description = 3;
+  repeated Phone value = 4;
+}
+
+message AddPhoneRequest {
+  string user_id = 1;
+  string number = 2;
+}
+
+message AddPhoneReplay {
+  bool is_success = 1;
+  string error_code = 2;
+  string description = 3;
+  Phone value = 4;
+}
+
+message RemovePhoneRequest {
+  string user_id = 1;
+  string number = 2;
+}
+
+message RemovePhoneReplay {
+  bool is_success = 1;
+  string error_code = 2;
+  string description = 3;
+}
+
+/*
+########## Address ##########
+*/
+
+message Address {
+    string id = 1;
+    string line = 2;
+    int32 number = 3;
+    string post_code = 4;
+}
+
+message GetAddressRequest {
+    string user_id = 1;
+}
+
+message GetAddressReplay {
+    bool is_success = 1;
+    string error_code = 2;
+    string description = 3;
+    repeated Address value = 4;
+}
+
+message AddAddressRequest {
+    string user_id = 1;
+    string line = 2;
+    int32 number = 3;
+    string post_code = 4;
+}
+
+message AddAddressReplay {
+    bool is_success = 1;
+    string error_code = 2;
+    string description = 3;
+    Address value = 4;
+}
+
+message RemoveAddressRequest {
+    string user_id = 1;
+    string id = 2;
+}
+
+message RemoveAddressReplay {
+    bool is_success = 1;
+    string error_code = 2;
+    string description = 3;
+}
+
+/*
+########## Users ##########
+*/
+
+message User {
+    string id = 1;
+    string email = 2;
+    string first_name = 3;
+    int32 last_names = 4;
+    google.protobuf.Timestamp birth_date = 5;
+    
+    repeated Phone phones = 6;
+    repeated Address addresses = 7;
+}
+
+message GetUsersRequest {
+    int32 skip = 1;
+    int32 take = 2;
+}
+
+message GetUsersReplay {
+    bool is_success = 1;
+    string error_code = 2;
+    string description = 3;
+    repeated User value = 4;
+}
+
+message GetUserRequest {
+    string user_id = 1;
+}
+
+message GetUserReplay {
+    bool is_success = 1;
+    string error_code = 2;
+    string description = 3;
+    User value = 4;
+}
+
+message AddUserRequest {
+    string email = 1;
+    string first_name = 2;
+    int32 last_names = 3;
+    google.protobuf.Timestamp birth_date = 4;
+}
+
+message AddUserReplay {
+    bool is_success = 1;
+    string error_code = 2;
+    string description = 3;
+    User value = 4;
+}
+
+message UpdateUserRequest {
+    string id = 1;
+    string email = 2;
+    string first_name = 3;
+    int32 last_names = 4;
+    google.protobuf.Timestamp birth_date = 5;
+}
+
+message UpdateUserReplay {
+    bool is_success = 1;
+    string error_code = 2;
+    string description = 3;
+    User value = 4;
 }

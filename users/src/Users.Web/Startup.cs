@@ -76,7 +76,6 @@ namespace Users.Web
                     .Add<PhoneMap>()
                     .Add<AddressMap>()
                     .Add<UserMap>())
-                
                 .ExposeConfiguration(configuration =>
                 {
                     configuration.SetProperty(Environment.Hbm2ddlKeyWords, "auto-quote");
