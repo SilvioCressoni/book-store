@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,8 @@ using Users.Application.Contracts.Request;
 using Users.Application.Mapper;
 using Users.Application.Operations;
 using Users.Domain;
+
+using UserResponse = Users.Application.Contracts.Response.User;
 
 namespace Users.Web.Services
 {
@@ -196,6 +199,40 @@ namespace Users.Web.Services
             }
 
             return mapper.Map(DomainError.UserError.InvalidUserId);
+        }
+
+        public override async Task GetUsers(GetUsersRequest request, IServerStreamWriter<GetUserReplay> responseStream,
+            ServerCallContext context)
+        {
+            var operation = _provider.GetRequiredService<UserGetAllOperation>();
+            var result = await operation.ExecuteAsync(new UserGetAll
+            {
+                Skip = request.Skip ?? 0,
+                Take = request.Take ?? 0
+            });
+
+            if (!result.IsSuccess)
+            {
+                var mapper = _provider.GetRequiredService<IMapper<Result, GetUserReplay>>();
+                await responseStream.WriteAsync(mapper.Map(result));
+                return;
+            }
+
+            if (result is OkResult<IEnumerable<UserResponse>> users)
+            {
+                var mapper = _provider.GetRequiredService<IMapper<UserResponse, User>>();
+                var replay = new GetUserReplay
+                {
+                    IsSuccess = true
+                };
+
+                foreach (var user in users.Value)
+                {
+                    replay.Value = mapper.Map(user);
+                    await responseStream.WriteAsync(replay);
+                }
+            }
+
         }
 
         #endregion

@@ -3,6 +3,7 @@
 option csharp_namespace = "Users.Web";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 service Users {
   rpc GetPhones(GetPhoneRequest) returns(GetPhoneReplay) { }
@@ -14,7 +15,7 @@ service Users {
   rpc RemoveAddress(RemoveAddressRequest) returns(RemoveAddressReplay) { }
 
   rpc GetUser(GetUserRequest) returns(GetUserReplay) { }
-  rpc GetUsers(GetUsersRequest) returns(GetUsersReplay) { }
+  rpc GetUsers(GetUsersRequest) returns(stream GetUserReplay) { }
   rpc AddUsers(AddUserRequest) returns(AddUserReplay) { }
   rpc UpdateUser(UpdateUserRequest) returns(UpdateUserReplay) { }
   
@@ -125,15 +126,8 @@ message User {
 }
 
 message GetUsersRequest {
-    int32 skip = 1;
-    int32 take = 2;
-}
-
-message GetUsersReplay {
-    bool is_success = 1;
-    string error_code = 2;
-    string description = 3;
-    repeated User value = 4;
+    google.protobuf.Int32Value skip = 1;
+    google.protobuf.Int32Value take = 2;
 }
 
 message GetUserRequest {
