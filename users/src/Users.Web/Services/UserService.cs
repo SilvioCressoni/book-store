@@ -9,12 +9,11 @@ using Users.Application.Contracts.Request;
 using Users.Application.Mapper;
 using Users.Application.Operations;
 using Users.Domain;
-
-using UserResponse = Users.Application.Contracts.Response.User;
+using Users.Web.Proto;
 
 namespace Users.Web.Services
 {
-    public class UserService : Users.UsersBase
+    public class UserService : Proto.Users.UsersBase
     {
         private readonly ILogger<UserService> _logger;
         private readonly IServiceProvider _provider;
@@ -218,9 +217,9 @@ namespace Users.Web.Services
                 return;
             }
 
-            if (result is OkResult<IEnumerable<UserResponse>> users)
+            if (result is OkResult<IEnumerable<User>> users)
             {
-                var mapper = _provider.GetRequiredService<IMapper<UserResponse, User>>();
+                var mapper = _provider.GetRequiredService<IMapper<User, User>>();
                 var replay = new GetUserReplay
                 {
                     IsSuccess = true

@@ -2,7 +2,7 @@
 using Users.Application.Mapper;
 using Users.Domain;
 using Users.Web.Mappers;
-
+using Users.Web.Proto;
 using AddressResponse = Users.Application.Contracts.Response.Address;
 using PhoneResponse = Users.Application.Contracts.Response.Phone;
 using UserResponse = Users.Application.Contracts.Response.User;
@@ -50,7 +50,7 @@ namespace Users.Web.Modules
             #region Address
 
             builder.RegisterType<GrpcAddressMapper>()
-                .As<IMapper<PhoneResponse, Phone>>()
+                .As<IMapper<AddressResponse, Address>>()
                 .SingleInstance();
 
             builder.RegisterType<GetAddressesReplayMapper>()

@@ -1,6 +1,7 @@
 ﻿using System;
 using Google.Protobuf.WellKnownTypes;
 using Users.Application.Mapper;
+using Users.Web.Proto;
 using UserResponse = Users.Application.Contracts.Response.User;
 using PhoneResponse = Users.Application.Contracts.Response.Phone;
 using AddressResponse = Users.Application.Contracts.Response.Address;

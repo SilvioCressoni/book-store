@@ -36,20 +36,11 @@ services:
     environment:
        ASPNETCORE_ENVIRONMENT: "Development"
        ConnectionStrings__Postgres: "Server=postgres;Database=bookstoreuser;User Id=postgres;Password=BookStore@123;"
-       #ASPNETCORE_Kestrel__Certificates__Default__Password: "BookStoreUsers@123"
-       #ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/users-book-store.pfx"
     volumes:
       - "users-volume:/var/output"
-      #- "~/.aspnet/https:/https"
     ports:
       - '5100:5100'
-      - '5101:5101'
     depends_on:
       - postgres
       - users-migrations
       - consul
-  # ravendb: 
-  #   image: ravendb/ravendb
-  #   container_name: raven-book-store
-  #   ports:
-  #     - 8080:8080

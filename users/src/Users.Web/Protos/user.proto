@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "Users.Web";
+option csharp_namespace = "Users.Web.Proto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";

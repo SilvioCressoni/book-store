@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Users.Application.Contracts;
 using Users.Application.Contracts.Request;
+using Users.Application.Contracts.Response;
 using Users.Application.Operations;
 using Users.Domain;
 using UserResponse = Users.Application.Contracts.Response.User;
@@ -31,7 +32,7 @@ namespace Users.Web.Controllers
                 Email = user.Email
             });
 
-            if (result is OkResult<User> ok)
+            if (result is OkResult<UserResponse> ok)
             {
                 return Created("",ok.Value);
             }

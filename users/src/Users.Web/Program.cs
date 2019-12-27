@@ -16,19 +16,17 @@ namespace Users.Web
             Host.CreateDefaultBuilder(args)
                 .UseSystemd()
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureAppConfiguration(config =>
+                .ConfigureAppConfiguration((context, config) =>
                 {
                     config
                         .AddJsonFile("appsettings.json", optional: false)
+                        .AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true)
                         .AddEnvironmentVariables()
                         .AddCommandLine(args);
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
-//#if DEBUG
-//                        .UseUrls("https://+:5100;http://+:510;")
-//#endif
                         .UseLinuxTransport()
                         .UseStartup<Startup>();
                 });

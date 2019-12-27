@@ -1,6 +1,7 @@
 ﻿using System;
 using Users.Application.Mapper;
 using Users.Domain;
+using Users.Web.Proto;
 using PhoneApplication = Users.Application.Contracts.Response.Phone;
 
 namespace Users.Web.Mappers

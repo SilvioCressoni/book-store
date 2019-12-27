@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\health.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="FluentNHibernate" Version="2.1.2" />
@@ -12,9 +16,10 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="3.1.0" />
     <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.1.0" />
     <PackageReference Include="Npgsql" Version="4.1.2" />
-    <PackageReference Include="NSwag.AspNetCore" Version="13.2.0" />
     <PackageReference Include="RedHat.AspNetCore.Server.Kestrel.Transport.Linux" Version="3.0.0-*" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
+    <PackageReference Include="Steeltoe.Discovery.ClientCore" Version="2.4.0" />
+    <PackageReference Include="Steeltoe.Discovery.ConsulBase" Version="2.4.0" />
+    <PackageReference Include="Steeltoe.Management.EndpointCore" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +30,7 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\user.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\health.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>

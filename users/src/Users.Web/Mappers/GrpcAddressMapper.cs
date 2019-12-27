@@ -1,4 +1,5 @@
 ﻿using Users.Application.Mapper;
+using Users.Web.Proto;
 using AddressResponse = Users.Application.Contracts.Response.Address;
 
 namespace Users.Web.Mappers

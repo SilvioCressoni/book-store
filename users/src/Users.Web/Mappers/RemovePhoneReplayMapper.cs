@@ -1,5 +1,6 @@
 ﻿using Users.Application.Mapper;
 using Users.Domain;
+using Users.Web.Proto;
 
 namespace Users.Web.Mappers
 {

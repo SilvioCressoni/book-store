@@ -1,6 +1,7 @@
 ﻿using System;
 using Users.Application.Mapper;
 using Users.Domain;
+using Users.Web.Proto;
 using UserApplication = Users.Application.Contracts.Response.User;
 
 namespace Users.Web.Mappers

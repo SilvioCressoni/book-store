@@ -1,11 +1,12 @@
-using System;
-using System.Collections.Generic;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NSwag;
+using Steeltoe.Discovery.Client;
+using Steeltoe.Management.Endpoint.Health;
 using Users.Web.Modules;
 using Users.Web.Services;
 
@@ -13,38 +14,33 @@ namespace Users.Web
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-            services.AddMvcCore()
-                .AddJsonOptions(option =>
-                {
-                    option.JsonSerializerOptions.IgnoreNullValues = true;
-                });
-            
-            services.AddSwaggerDocument(config => { 
-                config.PostProcess = document =>
-                {
-                    document.Info.Version = "v1";
-                    document.Info.Title = "Users API";
-                    document.Info.Description = "User Manager";
-                    document.Info.TermsOfService = "None";
-                    document.Schemes = new List<OpenApiSchema>
-                    {
-                        OpenApiSchema.Http,
-                        OpenApiSchema.Https
-                    };
-                };
+            services.AddGrpc();
+            services.AddMemoryCache(opt =>
+            {
+                var cache = _configuration.GetSection("Cache").Get<MemoryCacheOptions>();
+                opt.ExpirationScanFrequency = cache.ExpirationScanFrequency;
+                opt.CompactionPercentage = cache.CompactionPercentage;
+                opt.SizeLimit = cache.SizeLimit;
             });
 
-            services.AddGrpc();
-            services.AddMemoryCache(opt => opt.ExpirationScanFrequency = TimeSpan.FromMinutes(5));
             services.AddMiniProfiler(options =>
             {
                 options.RouteBasePath = "/profiler";
             });
+
+            services.AddHealthActuator(_configuration);
+            services.AddDiscoveryClient(_configuration);
         }
         
         // ConfigureContainer is where you can register things directly
@@ -68,17 +64,15 @@ namespace Users.Web
             }
 
             app.UseRouting();
-            
-            app.UseStaticFiles();
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
-            
+
             app.UseMiniProfiler();
+            app.UseHealthActuator();
+            app.UseDiscoveryClient();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<UserService>();
-                endpoints.MapControllers();
+                endpoints.MapGrpcService<HealthService>();
             });
         }
     }

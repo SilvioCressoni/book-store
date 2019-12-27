@@ -1,6 +1,7 @@
 ﻿using System;
 using Users.Application.Mapper;
 using Users.Domain;
+using Users.Web.Proto;
 using AddressApplication = Users.Application.Contracts.Response.Address;
 
 namespace Users.Web.Mappers

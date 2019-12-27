@@ -1,4 +1,5 @@
 ﻿using Users.Application.Mapper;
+using Users.Web.Proto;
 using PhoneResponse = Users.Application.Contracts.Response.Phone;
 
 namespace Users.Web.Mappers
