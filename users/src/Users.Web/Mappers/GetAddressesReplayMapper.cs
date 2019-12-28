@@ -21,8 +21,8 @@ namespace Users.Web.Mappers
             var replay = new GetAddressesReplay
             {
                 IsSuccess = source.IsSuccess,
-                Description = source.Description,
-                ErrorCode = source.ErrorCode
+                Description = source.Description ?? string.Empty,
+                ErrorCode = source.ErrorCode ?? string.Empty
             };
 
             if (source is OkResult<IEnumerable<AddressApplication>> okResult)

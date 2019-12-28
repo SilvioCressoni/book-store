@@ -4,7 +4,7 @@ volumes:
   users-volume:
 services:
   postgres:
-    image: postgres:11-alpine
+    image: postgres:alpine
     container_name: postgres-book-store
     ports:
       - 5432:5432
@@ -32,10 +32,11 @@ services:
   users:
     build: ./users
     container_name: users-book-store
-    entrypoint: dockerize -wait file:///var/output/migrator.txt dotnet /app/Users.Web.dll
+    entrypoint: /bin/sh -c "dockerize -wait file:///var/output/migrator.txt && dockerize -wait tcp://consul:8500 && dotnet /app/Users.Web.dll"
     environment:
        ASPNETCORE_ENVIRONMENT: "Development"
        ConnectionStrings__Postgres: "Server=postgres;Database=bookstoreuser;User Id=postgres;Password=BookStore@123;"
+       Consul__Host: "consul"
     volumes:
       - "users-volume:/var/output"
     ports:

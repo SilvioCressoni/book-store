@@ -11,8 +11,8 @@ namespace Users.Web.Mappers
             return new RemoveAddressReplay
             {
                 IsSuccess = source.IsSuccess,
-                Description = source.Description,
-                ErrorCode = source.ErrorCode
+                Description = source.Description ?? string.Empty,
+                ErrorCode = source.ErrorCode ?? string.Empty
             };
         }
     }

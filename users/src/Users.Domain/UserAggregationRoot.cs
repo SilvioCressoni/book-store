@@ -128,7 +128,7 @@ namespace Users.Domain
                 return UserError.MissingFirstName;
             }
 
-            if (firstName.Length > 100)
+            if (firstName.Length > 20)
             {
                 return UserError.InvalidFirstName;
             }
@@ -154,7 +154,7 @@ namespace Users.Domain
                 return UserError.MissingFirstName;
             }
 
-            if (firstName.Length > 100)
+            if (firstName.Length > 20)
             {
                 return UserError.InvalidFirstName;
             }
