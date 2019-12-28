@@ -6,7 +6,6 @@ using AutoFixture;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Users.Application.Contracts.Request;
 using Users.Application.Contracts.Response;
 using Users.Application.Mapper;

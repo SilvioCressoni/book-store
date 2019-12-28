@@ -4,7 +4,7 @@ volumes:
   users-volume:
 services:
   postgres:
-    image: postgres
+    image: postgres:11-alpine
     container_name: postgres-book-store
     ports:
       - 5432:5432

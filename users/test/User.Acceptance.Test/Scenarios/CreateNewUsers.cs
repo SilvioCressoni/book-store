@@ -1,7 +1,6 @@
 using AutoFixture;
 using TestStack.BDDfy;
 using Xunit;
-using Users.Acceptance.Test.Models;
 
 namespace Users.Acceptance.Test.Scenarios
 {
