@@ -1,4 +1,5 @@
 using FluentNHibernate.Mapping;
+using NHibernate.Type;
 
 namespace Users.Infrastructure.Mapper
 {
@@ -26,7 +27,8 @@ namespace Users.Infrastructure.Mapper
                 .Unique();
 
             Map(x => x.BirthDay)
-                .Not.Nullable();
+                .Not.Nullable()
+                .CustomType<UtcDateTimeType>();
 
             HasMany(x => x.Addresses)
                 .LazyLoad()
@@ -35,7 +37,7 @@ namespace Users.Infrastructure.Mapper
             HasMany(x => x.Phones)
                 .LazyLoad()
                 .AsSet()
-                .Cascade.All();;
+                .Cascade.All();
         }
     }
 }
