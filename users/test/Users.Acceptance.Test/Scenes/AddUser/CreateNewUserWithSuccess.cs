@@ -14,7 +14,7 @@ namespace Users.Acceptance.Test.Scenes.AddUser
         IWant = "Create a new user",
         SoThat = "I can use system"
     )]
-    public class CreateNewUsers : BaseScene
+    public class CreateNewUserWithSuccess : BaseScene
     {
         private AddUserRequest _userRequest;
         private AddUserReplay _replay;

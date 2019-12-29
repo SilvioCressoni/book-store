@@ -262,7 +262,7 @@ namespace Users.Domain.Test
         public void Create_Should_ReturnOk()
         {
             var email = $"{_fixture.Create<string>()}@example.com";
-            var firstName = _fixture.Create<string>();
+            var firstName = _fixture.Create<string>().Substring(0, 20);
             var lastName = _fixture.Create<string>();
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
@@ -345,7 +345,7 @@ namespace Users.Domain.Test
         public void Create_Should_ReturnFail_When_LastNamesIsMissing(string lastName)
         {
             var email = $"{_fixture.Create<string>()}@example.com";
-            var firstName = _fixture.Create<string>();
+            var firstName = _fixture.Create<string>().Substring(0, 20);
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
             var root = new UserAggregationRoot(new UserState(new User()));
@@ -359,7 +359,7 @@ namespace Users.Domain.Test
         public void Create_Should_ReturnFail_When_LastNamesIsInvalid()
         {
             var email = $"{_fixture.Create<string>()}@example.com";
-            var firstName = _fixture.Create<string>();
+            var firstName = _fixture.Create<string>().Substring(0, 20);
             var lastName = string.Join(string.Empty, _fixture.CreateMany<char>(101));
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
@@ -407,7 +407,7 @@ namespace Users.Domain.Test
         [InlineData(" ")]
         public void Update_Should_ReturnFail_When_LastNamesIsMissing(string lastName)
         {
-            var firstName = _fixture.Create<string>();
+            var firstName = _fixture.Create<string>().Substring(0, 20);
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
             var root = new UserAggregationRoot(new UserState(new User()));
@@ -420,7 +420,7 @@ namespace Users.Domain.Test
         [Fact]
         public void Update_Should_ReturnFail_When_LastNamesIsInvalid()
         {
-            var firstName = _fixture.Create<string>();
+            var firstName = _fixture.Create<string>().Substring(0, 20);
             var lastName = string.Join(string.Empty, _fixture.CreateMany<char>(101));
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
