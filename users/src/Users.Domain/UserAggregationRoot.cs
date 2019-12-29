@@ -123,6 +123,11 @@ namespace Users.Domain
                 return UserError.InvalidEmail;
             }
 
+            if (email.Length > 100)
+            {
+                return UserError.InvalidEmailLength;
+            }
+
             if (firstName.IsMissing())
             {
                 return UserError.MissingFirstName;

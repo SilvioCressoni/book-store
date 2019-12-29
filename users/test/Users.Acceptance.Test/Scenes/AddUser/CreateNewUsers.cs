@@ -6,8 +6,9 @@ using FluentAssertions.Extensions;
 using Google.Protobuf.WellKnownTypes;
 using TestStack.BDDfy;
 using Users.Web.Proto;
+using Xunit;
 
-namespace Users.Acceptance.Test.Scenes
+namespace Users.Acceptance.Test.Scenes.AddUser
 {
     [Story(
         IWant = "Create a new user",
@@ -50,6 +51,12 @@ namespace Users.Acceptance.Test.Scenes
             _replay.Value.LastNames.Should().Be(_userRequest.LastNames);
             _replay.Value.Email.Should().Be(_userRequest.Email);
             _replay.Value.BirthDate.Should().Be(_userRequest.BirthDate);
+        }
+        
+        [Fact]
+        public void Execute()
+        {
+            this.BDDfy();
         }
     }
 }
