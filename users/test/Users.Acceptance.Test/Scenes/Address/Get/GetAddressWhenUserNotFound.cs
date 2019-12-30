@@ -9,7 +9,7 @@ using Xunit;
 namespace Users.Acceptance.Test.Scenes.Address.Get
 {
     [Story(
-        IWant = "Add phone to user"
+        IWant = "Try to get user address"
     )]
     public class GetAddressWhenUserNotFound : BaseScene
     {
@@ -17,13 +17,13 @@ namespace Users.Acceptance.Test.Scenes.Address.Get
         private GetAddressesReplay _replay;
         private string _userId;
         [Given(StepTitle = "Given an user that not exist")]
-        private void GivenAnUser()
+        private void GivenAnUserThatNotExist()
         {
             _userId = Fixture.Create<string>();
         }
 
-        [When(StepTitle = "When I get user number")]
-        private async Task WhenIUpdateUserInfo()
+        [When(StepTitle = "When I get user address")]
+        private async Task WhenIGetUserAddress()
         {
             _request = Fixture.Build<GetAddressesRequest>()
                 .With(x => x.UserId, _userId)
@@ -33,7 +33,7 @@ namespace Users.Acceptance.Test.Scenes.Address.Get
         }
 
         [Then(StepTitle = "Then I should get user not found")]
-        private void ThenIShouldCreateAUser()
+        private void ThenIShouldGetUserNotFound()
         {
             _replay.IsSuccess.Should().BeFalse();
             _replay.ErrorCode.Should().Be(DomainError.UserError.UserNotFound.ErrorCode);

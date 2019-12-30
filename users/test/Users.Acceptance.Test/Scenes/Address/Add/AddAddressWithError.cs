@@ -13,7 +13,7 @@ using Xunit;
 namespace Users.Acceptance.Test.Scenes.Address.Add
 {
     [Story(
-        IWant = "Try add phone to user"
+        IWant = "Try add address to user"
     )]
     public class AddAddressWithError : BaseScene
     {
@@ -34,7 +34,7 @@ namespace Users.Acceptance.Test.Scenes.Address.Add
         }
 
         [Given(StepTitle = "Given an user")]
-        private async Task GivenANewUser()
+        private async Task GivenAnUser()
         {
             var addUserRequest = Fixture.Build<AddUserRequest>()
                 .With(x => x.BirthDate, Timestamp.FromDateTime(Fixture.Create<DateTime>().AsUtc()))
@@ -47,8 +47,8 @@ namespace Users.Acceptance.Test.Scenes.Address.Add
             _userId = replay.Value.Id;
         }
 
-        [When(StepTitle = "When I add the phone")]
-        private async Task WhenIUpdateUserInfo()
+        [When(StepTitle = "When I try to add address")]
+        private async Task WhenITryToAddAddress()
         {
             _request = Fixture.Build<AddAddressRequest>()
                 .With(x => x.UserId, _userId)
@@ -60,8 +60,8 @@ namespace Users.Acceptance.Test.Scenes.Address.Add
             _replay = await Client.AddAddressAsync(_request);
         }
 
-        [Then(StepTitle = "Then the User shouldn't have a phone")]
-        private async Task ThenIShouldCreateAUser()
+        [Then(StepTitle = "Then I should get an error")]
+        private async Task ThenIShouldGetAnError()
         {
             _replay.IsSuccess.Should().BeFalse();
             _replay.ErrorCode.Should().Be(_error.ErrorCode);

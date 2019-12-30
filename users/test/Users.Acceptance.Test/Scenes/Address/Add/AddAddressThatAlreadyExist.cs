@@ -12,7 +12,7 @@ using Xunit;
 namespace Users.Acceptance.Test.Scenes.Address.Add
 {
     [Story(
-        IWant = "Try to add phone to user that already exist"
+        IWant = "Try to add address to user and that already exist"
     )]
     public class AddAddressThatAlreadyExist : BaseScene
     {
@@ -21,7 +21,7 @@ namespace Users.Acceptance.Test.Scenes.Address.Add
         private string _userId;
 
         [Given(StepTitle = "Given an user")]
-        private async Task GivenANewUser()
+        private async Task GivenAnUser()
         {
             var addUserRequest = Fixture.Build<AddUserRequest>()
 
@@ -35,8 +35,8 @@ namespace Users.Acceptance.Test.Scenes.Address.Add
             _userId = replay.Value.Id;
         }
 
-        [AndGiven(StepTitle = "And this with phone")]
-        private async Task AndWithPhone()
+        [AndGiven(StepTitle = "With an address")]
+        private async Task WithAnAddress()
         {
             _request = Fixture.Build<AddAddressRequest>()
                 .With(x => x.UserId, _userId)
@@ -49,14 +49,14 @@ namespace Users.Acceptance.Test.Scenes.Address.Add
             _replay.IsSuccess.Should().BeTrue();
         }
 
-        [When(StepTitle = "When I add the phone")]
-        private async Task WhenIUpdateUserInfo()
+        [When(StepTitle = "When I add to add same address")]
+        private async Task WhenIAddToAddSameAddress()
         {
             _replay = await Client.AddAddressAsync(_request);
         }
 
-        [Then(StepTitle = "Then I should get a error")]
-        private void ThenIShouldCreateAUser()
+        [Then(StepTitle = "Then I should get an error")]
+        private void ThenIShouldGetAnError()
         {
             _replay.IsSuccess.Should().BeFalse();
             _replay.ErrorCode.Should().Be(DomainError.AddressError.AddressAlreadyExist.ErrorCode);
