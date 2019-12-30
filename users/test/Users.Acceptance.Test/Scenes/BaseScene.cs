@@ -1,9 +1,6 @@
 using System;
 using AutoFixture;
 using Microsoft.Extensions.DependencyInjection;
-using TestStack.BDDfy;
-using Users.Web.Proto;
-using Xunit;
 
 namespace Users.Acceptance.Test.Scenes
 {

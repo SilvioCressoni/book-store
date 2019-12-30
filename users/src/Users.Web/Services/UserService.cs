@@ -137,7 +137,7 @@ namespace Users.Web.Services
                     return mapper.Map(result);
                 }
 
-                return mapper.Map(DomainError.UserError.InvalidUserId);
+                return mapper.Map(DomainError.AddressError.InvalidAddressId);
             }
 
             return mapper.Map(DomainError.UserError.InvalidUserId);

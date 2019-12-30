@@ -9,17 +9,17 @@ using Users.Domain;
 using Users.Web.Proto;
 using Xunit;
 
-namespace Users.Acceptance.Test.Scenes.Phones.Remove
+namespace Users.Acceptance.Test.Scenes.Address.Remove
 {
     [Story(
         IWant = "Try remove phone when the number is missing"
     )]
-    public class RemovePhoneWhenMissingNumber : BaseScene
+    public class RemoveAddressWhenMissingNumber : BaseScene
     {
-        private RemovePhoneRequest _request;
-        private RemovePhoneReplay _replay;
+        private RemoveAddressRequest _request;
+        private RemoveAddressReplay _replay;
         private string _userId;
-
+        
         [Given(StepTitle = "Given an user")]
         private async Task GivenAUser()
         {
@@ -37,32 +37,34 @@ namespace Users.Acceptance.Test.Scenes.Phones.Remove
         [AndGiven(StepTitle =  "With phone")]
         private async Task WithPhone()
         {
-            var request = Fixture.Build<AddPhoneRequest>()
+            var request = Fixture.Build<AddAddressRequest>()
                 .With(x => x.UserId, _userId)
-                .With(x => x.Number, Fixture.Create<string>().Substring(0, 15))
+                .With(x => x.PostCode, Fixture.Create<string>().Substring(0, 10))
+                .With(x => x.Number, Math.Abs(Fixture.Create<int>()))
                 .Create();
             
-            var replay = await Client.AddPhoneAsync(request);
+            var replay = await Client.AddAddressAsync(request);
+            
             replay.IsSuccess.Should().BeTrue();
         }
 
         [When(StepTitle = "When I remove the phone")]
         private async Task WhenIUpdateUserInfo()
         {
-            _request = Fixture.Build<RemovePhoneRequest>()
+            _request = Fixture.Build<RemoveAddressRequest>()
                 .With(x => x.UserId, _userId)
-                .With(x => x.Number, string.Empty)
+                .With(x => x.Id, Guid.Empty.ToString)
                 .Create();
             
-            _replay = await Client.RemovePhoneAsync(_request);
+            _replay = await Client.RemoveAddressAsync(_request);
         }
 
         [Then(StepTitle = "Then the User should have a phone")]
         private async Task ThenIShouldCreateAUser()
         {
             _replay.IsSuccess.Should().BeFalse();
-            _replay.ErrorCode.Should().Be(DomainError.PhoneError.MissingNumber.ErrorCode);
-            _replay.Description.Should().Be(DomainError.PhoneError.MissingNumber.Description);
+            _replay.ErrorCode.Should().Be(DomainError.AddressError.InvalidAddressId.ErrorCode);
+            _replay.Description.Should().Be(DomainError.AddressError.InvalidAddressId.Description);
 
             var user = await Client.GetUserAsync(new GetUserRequest
             {
@@ -70,7 +72,7 @@ namespace Users.Acceptance.Test.Scenes.Phones.Remove
             });
 
             user.IsSuccess.Should().BeTrue();
-            user.Value.Phones.Should().NotBeEmpty();
+            user.Value.Addresses.Should().NotBeEmpty();
         }
         
         [Fact]

@@ -32,12 +32,14 @@ namespace Users.Infrastructure.Mapper
 
             HasMany(x => x.Addresses)
                 .LazyLoad()
-                .Cascade.All();
+                .Inverse()
+                .Cascade.AllDeleteOrphan();
 
             HasMany(x => x.Phones)
                 .LazyLoad()
+                .Inverse()
                 .AsSet()
-                .Cascade.All();
+                .Cascade.AllDeleteOrphan();
         }
     }
 }
