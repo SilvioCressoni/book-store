@@ -28,26 +28,7 @@ namespace Users.Domain
 
         public async Task SaveAsync(IUserAggregationRoot aggregate, CancellationToken cancellation = default)
         {
-            foreach (var @event in aggregate.Events)
-            {
-                switch (@event)
-                {
-                    case PhoneRemoveEvent phoneRemoveEvent:
-                        var phone = aggregate.State.Phones.First(x => x.Number == phoneRemoveEvent.Number);
-                        aggregate.Apply(phoneRemoveEvent);
-                        phone.User = null;
-                        await _repository.RemoveAsync(phone, cancellation)
-                            .ConfigureAwait(false);
-                        break;
-                    case AddressRemoveEvent address:
-                        break;
-                    default:
-                        aggregate.Apply(@event);
-                        break;
-                }
-            }
-            
-           await  _repository.SaveAsync((Common.User) aggregate.State, cancellation)
+            await  _repository.SaveAsync((Common.User) aggregate.State, cancellation)
                .ConfigureAwait(false);
         }
     }

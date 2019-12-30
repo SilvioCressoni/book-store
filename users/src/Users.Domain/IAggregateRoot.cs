@@ -6,11 +6,7 @@ namespace Users.Domain
         where TState : class, IState<TId>
     {
         TState State { get; }
-
-        IEnumerable<IEvent> Events { get; }
-
-        void AddEvent(IEvent @event);
-
-        void Apply(IEvent @event);
+        void Apply<TEvent>(TEvent @event)
+            where TEvent : IEvent;
     }
 }
