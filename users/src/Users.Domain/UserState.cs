@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Users.Domain.Common;
 using Users.Domain.Event;
 using Users.Infrastructure.Extensions;
@@ -23,7 +24,28 @@ namespace Users.Domain
             _user = user;
         }
 
-        public void Apply(PhoneAddEvent @event)
+        public void Apply(IEvent @event)
+        {
+            switch (@event)
+            {
+                case PhoneAddEvent addPhone:
+                    Apply(addPhone);
+                    break;
+                case PhoneRemoveEvent removePhone:
+                    Apply(removePhone);
+                    break;
+                case AddressAddEvent addressAddEvent:
+                    Apply(addressAddEvent);
+                    break;
+                case AddressRemoveEvent addressRemoveEvent:
+                    Apply(addressRemoveEvent);
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
+        }
+        
+        private void Apply(PhoneAddEvent @event)
         {
             _user.Phones.Add(new Phone
             {
@@ -32,10 +54,8 @@ namespace Users.Domain
             });
         }
 
-        public void Apply(PhoneRemoveEvent @event)
-        {
-            _user.Phones.Remove(x => x.Number == @event.Number);
-        }
+        private void Apply(PhoneRemoveEvent @event) 
+            => _user.Phones.Remove(x => x.Number == @event.Number);
 
         public void Apply(AddressAddEvent @event)
         {
@@ -48,10 +68,8 @@ namespace Users.Domain
             });
         }
 
-        public void Apply(AddressRemoveEvent @event)
-        {
-            _user.Addresses.Remove(x => x.Id == @event.Id);
-        }
+        public void Apply(AddressRemoveEvent @event) 
+            => _user.Addresses.Remove(x => x.Id == @event.Id);
 
         public void Apply(UpdateEvent @event)
         {

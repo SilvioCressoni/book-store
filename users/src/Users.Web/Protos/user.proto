@@ -26,8 +26,7 @@ service Users {
 */
 
 message Phone {
-  string user_id = 1;
-  string number = 2;
+  string number = 1;
 }
 
 message GetPhoneRequest {
@@ -56,6 +55,7 @@ message AddPhoneReplay {
 
 message RemovePhoneRequest {
   string user_id = 1;
+  string number = 2;
 }
 
 message RemovePhoneReplay {
@@ -158,10 +158,9 @@ message AddUserReplay {
 
 message UpdateUserRequest {
     string id = 1;
-    string email = 2;
-    string first_name = 3;
-    string last_names = 4;
-    google.protobuf.Timestamp birth_date = 5;
+    string first_name = 2;
+    string last_names = 3;
+    google.protobuf.Timestamp birth_date = 4;
 }
 
 message UpdateUserReplay {

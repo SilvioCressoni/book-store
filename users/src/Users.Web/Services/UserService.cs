@@ -69,7 +69,8 @@ namespace Users.Web.Services
             {
                 var result = await operation.ExecuteAsync(new PhoneRemove
                 {
-                    UserId = userId
+                    UserId = userId,
+                    Number = request.Number
                 });
 
                 return mapper.Map(result);
