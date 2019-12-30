@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoFixture;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Users.Domain.Common;
+using Users.Domain.Interceptors;
 using Xunit;
 
 namespace Users.Domain.Test
@@ -25,7 +29,9 @@ namespace Users.Domain.Test
             var user = _fixture.Create<User>();
             var number = string.Join(string.Empty, _fixture.CreateMany<char>(14));
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user), 
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.AddPhone(number);
             
             result.Should().NotBeNull();
@@ -40,7 +46,9 @@ namespace Users.Domain.Test
         {
             var user = _fixture.Create<User>();
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.AddPhone(number);
 
             result.Should().NotBeNull();
@@ -53,7 +61,9 @@ namespace Users.Domain.Test
             var user = _fixture.Create<User>();
             var number = string.Join(string.Empty, _fixture.CreateMany<char>(16));
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.AddPhone(number);
 
             result.Should().NotBeNull();
@@ -74,7 +84,9 @@ namespace Users.Domain.Test
                 })
                 .Create();
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.AddPhone(number);
 
             result.Should().NotBeNull();
@@ -96,7 +108,9 @@ namespace Users.Domain.Test
                 .Create();
             
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.RemovePhone(number);
             
             result.Should().NotBeNull();
@@ -108,7 +122,9 @@ namespace Users.Domain.Test
         {
             var user = _fixture.Create<User>();
 
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.RemovePhone(null);
             
             result.Should().NotBeNull();
@@ -121,7 +137,9 @@ namespace Users.Domain.Test
             var number = _fixture.Create<string>();
             var user = _fixture.Create<User>();
 
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.RemovePhone(number);
             
             result.Should().NotBeNull();
@@ -139,7 +157,9 @@ namespace Users.Domain.Test
             var postCode = string.Join(string.Empty, _fixture.CreateMany<char>(10));
             var number = Math.Abs(_fixture.Create<int>());
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.AddAddress(line, number, postCode);
             
             result.Should().NotBeNull();
@@ -157,7 +177,9 @@ namespace Users.Domain.Test
             var postCode = string.Join(string.Empty, _fixture.CreateMany<char>(10));
             var number = Math.Abs(_fixture.Create<int>());
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.AddAddress(line, number, postCode);
             
             result.Should().NotBeNull();
@@ -173,7 +195,9 @@ namespace Users.Domain.Test
             var postCode = string.Join(string.Empty, _fixture.CreateMany<char>(10));
             var number = Math.Abs(_fixture.Create<int>());
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.AddAddress(line, number, postCode);
             
             result.Should().NotBeNull();
@@ -189,7 +213,9 @@ namespace Users.Domain.Test
             var postCode = string.Join(string.Empty, _fixture.CreateMany<char>(10));
             var number = Math.Abs(_fixture.Create<int>());
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.AddAddress(line, -number, postCode);
             
             result.Should().NotBeNull();
@@ -207,7 +233,9 @@ namespace Users.Domain.Test
             var line = string.Join(string.Empty, _fixture.CreateMany<char>(100));
             var number = Math.Abs(_fixture.Create<int>());
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.AddAddress(line, number, postCode);
             
             result.Should().NotBeNull();
@@ -223,7 +251,9 @@ namespace Users.Domain.Test
             var postCode = string.Join(string.Empty, _fixture.CreateMany<char>(11));
             var number = Math.Abs(_fixture.Create<int>());
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.AddAddress(line, number, postCode);
             
             result.Should().NotBeNull();
@@ -248,7 +278,9 @@ namespace Users.Domain.Test
                 })
                 .Create();
             
-            var root = new UserAggregationRoot(new UserState(user));
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.AddAddress(line, number, postCode);
             
             result.Should().NotBeNull();
@@ -266,7 +298,9 @@ namespace Users.Domain.Test
             var lastName = _fixture.Create<string>();
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
-            var root = new UserAggregationRoot(new UserState(new User()));
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.Create(email, firstName, lastName, years);
 
             result.Should().NotBeNull();
@@ -283,7 +317,9 @@ namespace Users.Domain.Test
             var lastName = _fixture.Create<string>();
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
-            var root = new UserAggregationRoot(new UserState(new User()));
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.Create(email, firstName, lastName, years);
 
             result.Should().NotBeNull();
@@ -298,7 +334,9 @@ namespace Users.Domain.Test
             var lastName = _fixture.Create<string>();
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
-            var root = new UserAggregationRoot(new UserState(new User()));
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.Create(email, firstName, lastName, years);
 
             result.Should().NotBeNull();
@@ -315,7 +353,9 @@ namespace Users.Domain.Test
             var lastName = _fixture.Create<string>();
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
-            var root = new UserAggregationRoot(new UserState(new User()));
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.Create(email, firstName, lastName, years);
 
             result.Should().NotBeNull();
@@ -330,7 +370,9 @@ namespace Users.Domain.Test
             var lastName = _fixture.Create<string>();
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
-            var root = new UserAggregationRoot(new UserState(new User()));
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.Create(email, firstName, lastName, years);
 
             result.Should().NotBeNull();
@@ -348,7 +390,9 @@ namespace Users.Domain.Test
             var firstName = _fixture.Create<string>().Substring(0, 20);
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
-            var root = new UserAggregationRoot(new UserState(new User()));
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.Create(email, firstName, lastName, years);
 
             result.Should().NotBeNull();
@@ -363,7 +407,9 @@ namespace Users.Domain.Test
             var lastName = string.Join(string.Empty, _fixture.CreateMany<char>(101));
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
-            var root = new UserAggregationRoot(new UserState(new User()));
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.Create(email, firstName, lastName, years);
 
             result.Should().NotBeNull();
@@ -379,7 +425,9 @@ namespace Users.Domain.Test
             var lastName = _fixture.Create<string>();
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
-            var root = new UserAggregationRoot(new UserState(new User()));
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.Update(firstName, lastName, years);
 
             result.Should().NotBeNull();
@@ -393,7 +441,9 @@ namespace Users.Domain.Test
             var lastName = _fixture.Create<string>();
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
-            var root = new UserAggregationRoot(new UserState(new User()));
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.Update(firstName, lastName, years);
 
             result.Should().NotBeNull();
@@ -410,7 +460,9 @@ namespace Users.Domain.Test
             var firstName = _fixture.Create<string>().Substring(0, 20);
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
-            var root = new UserAggregationRoot(new UserState(new User()));
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.Update(firstName, lastName, years);
 
             result.Should().NotBeNull();
@@ -424,7 +476,9 @@ namespace Users.Domain.Test
             var lastName = string.Join(string.Empty, _fixture.CreateMany<char>(101));
             var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
             
-            var root = new UserAggregationRoot(new UserState(new User()));
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
             var result = root.Update(firstName, lastName, years);
 
             result.Should().NotBeNull();

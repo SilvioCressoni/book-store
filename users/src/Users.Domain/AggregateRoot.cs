@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using NHibernate;
+using Users.Domain.Interceptors;
 
 namespace Users.Domain
 {
@@ -8,24 +11,37 @@ namespace Users.Domain
     {
         public TState State { get; }
 
-        protected AggregateRoot(TState state)
+        private readonly IEnumerable<IAggregationRootInterceptor<TState, TId>> _interceptors;
+        private readonly ILogger _logger;
+
+        protected AggregateRoot(TState state, 
+            IEnumerable<IAggregationRootInterceptor<TState, TId>> interceptors, 
+            ILogger logger)
         {
             State = state ?? throw new ArgumentNullException(nameof(state));
+            _interceptors = interceptors ?? throw new ArgumentNullException(nameof(interceptors));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Apply<TEvent>(TEvent @event)
             where TEvent : IEvent
         {
-            IObserver<IEvent> ob = null;
+            OnApply(@event);
+            ((dynamic)State).Apply(@event);
+        }
+
+        private void OnApply(IEvent @event)
+        {
             try
             {
-                ((dynamic)State).Apply(@event);
-                ob.OnNext(@event);
+                foreach (var interceptor in _interceptors)
+                {
+                    interceptor.OnApply(State, @event);
+                }
             }
             catch (Exception e)
             {
-                ob.OnError(e);
-                throw;
+                _logger.LogError(e, "Error to Intercept");
             }
         }
     }

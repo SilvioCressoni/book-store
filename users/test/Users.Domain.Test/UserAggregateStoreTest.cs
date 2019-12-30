@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Users.Domain.Common;
@@ -16,6 +17,7 @@ namespace Users.Domain.Test
     {
         private readonly Fixture _fixture;
         private readonly IUserRepository _repository;
+        private readonly ILoggerFactory _loggerFactory;
         private readonly UserAggregateStore _store;
 
         public UserAggregateStoreTest()
@@ -25,12 +27,15 @@ namespace Users.Domain.Test
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
             _repository = Substitute.For<IUserRepository>();
-            _store = new UserAggregateStore(_repository);
+            _loggerFactory = Substitute.For<ILoggerFactory>();
+            _loggerFactory.CreateLogger(Arg.Any<string>())
+                .Returns(Substitute.For<ILogger<UserAggregationRoot>>());
+            _store = new UserAggregateStore(_repository, Substitute.For<ILoggerFactory>());
         }
 
         [Fact]
         public void Create_Should_Throw_When_StoreIsNull()
-            => Throws<ArgumentNullException>(() => new UserAggregateStore(null));
+            => Throws<ArgumentNullException>(() => new UserAggregateStore(null, _loggerFactory));
         
         [Fact]
         public void Create_Should_ReturnOk()

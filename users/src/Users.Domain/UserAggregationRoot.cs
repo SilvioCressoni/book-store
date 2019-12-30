@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 using Users.Domain.Event;
+using Users.Domain.Interceptors;
 using Users.Infrastructure.Extensions;
 using static Users.Domain.DomainError;
 
@@ -9,8 +12,10 @@ namespace Users.Domain
 {
     public class UserAggregationRoot : AggregateRoot<UserState, Guid>, IUserAggregationRoot
     {
-        public UserAggregationRoot(UserState state) 
-            : base(state)
+        public UserAggregationRoot(UserState state, 
+            IEnumerable<IAggregationRootInterceptor<UserState, Guid>> interceptors,
+            ILogger<UserAggregationRoot> logger) 
+            : base(state, interceptors, logger)
         {
         }
 
