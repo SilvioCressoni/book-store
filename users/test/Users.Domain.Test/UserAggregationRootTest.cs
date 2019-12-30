@@ -287,6 +287,62 @@ namespace Users.Domain.Test
             result.Should().BeEquivalentTo(DomainError.AddressError.AddressAlreadyExist);
         }
 
+        [Fact]
+        public void RemoveAddress_Should_ReturnOk()
+        {
+            var addressId = _fixture.Create<Guid>();
+
+            var user = _fixture.Build<User>()
+                .With(x => x.Addresses, new List<Address>
+                {
+                    new Address
+                    {
+                        Id =  addressId
+                    }
+                })
+                .Create();
+
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
+
+            var result = root.RemoveAddress(addressId);
+
+            result.Should().NotBeNull();
+            result.Should().BeEquivalentTo(Result.Ok());
+        }
+
+
+        [Fact]
+        public void RemoveAddress_Should_ReturnInvalidAddressId_When_IdIsEmpty()
+        {
+            var user = _fixture.Create<User>();
+
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
+
+            var result = root.RemoveAddress(Guid.Empty);
+
+            result.Should().NotBeNull();
+            result.Should().BeEquivalentTo(DomainError.AddressError.InvalidAddressId);
+        }
+
+        [Fact]
+        public void RemoveAddress_Should_ReturnAddressNotFound_When_AddressDoesNotExist()
+        {
+            var user = _fixture.Create<User>();
+
+            var root = new UserAggregationRoot(new UserState(user),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
+
+            var result = root.RemoveAddress(_fixture.Create<Guid>());
+
+            result.Should().NotBeNull();
+            result.Should().BeEquivalentTo(DomainError.AddressError.AddressNotFound);
+        }
+
         #endregion
 
         #region User
@@ -343,6 +399,24 @@ namespace Users.Domain.Test
             result.Should().BeEquivalentTo(DomainError.UserError.InvalidEmail);
         }
 
+
+        [Fact]
+        public void Create_Should_ReturnFail_When_EmailIsBiggerThan100()
+        {
+            var email = $"{string.Join(string.Empty, _fixture.CreateMany<char>(101))}@example.com";
+            var firstName = _fixture.Create<string>();
+            var lastName = _fixture.Create<string>();
+            var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
+
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
+            var result = root.Create(email, firstName, lastName, years);
+
+            result.Should().NotBeNull();
+            result.Should().BeEquivalentTo(DomainError.UserError.InvalidEmail);
+        }
+
         [Theory]
         [InlineData(null)]
         [InlineData("")]
@@ -378,8 +452,7 @@ namespace Users.Domain.Test
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(DomainError.UserError.InvalidFirstName);
         }
-        
-        
+
         [Theory]
         [InlineData(null)]
         [InlineData("")]
@@ -415,7 +488,23 @@ namespace Users.Domain.Test
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(DomainError.UserError.InvalidLastNames);
         }
-        
+
+        [Fact]
+        public void Update_Should_ReturnOk()
+        {
+            var firstName = _fixture.Create<string>().Substring(0, 20);
+            var lastName = _fixture.Create<string>();
+            var years = DateTime.Now.Subtract(TimeSpan.FromDays(365 * 20));
+
+            var root = new UserAggregationRoot(new UserState(new User()),
+                Enumerable.Empty<IAggregationRootInterceptor<UserState, Guid>>(),
+                Substitute.For<ILogger<UserAggregationRoot>>());
+            var result = root.Update(firstName, lastName, years);
+
+            result.Should().NotBeNull();
+            result.Should().BeEquivalentTo(Result.Ok());
+        }
+
         [Theory]
         [InlineData(null)]
         [InlineData("")]
@@ -449,7 +538,6 @@ namespace Users.Domain.Test
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(DomainError.UserError.InvalidFirstName);
         }
-        
         
         [Theory]
         [InlineData(null)]
