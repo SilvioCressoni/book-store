@@ -30,7 +30,9 @@ services:
     depends_on:
       - postgres
   users:
-    build: ./users
+    build: 
+      context: ./users/src
+      dockerfile: ./Users.Web/Dockerfile
     container_name: users-book-store
     entrypoint: /bin/sh -c "dockerize -wait file:///var/output/migrator.txt && dockerize -wait tcp://consul:8500 && dotnet /app/Users.Web.dll"
     environment:
