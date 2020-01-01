@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using Steeltoe.Discovery.Client;
 using Steeltoe.Management.Endpoint.Health;
 using Users.Web.Modules;
@@ -65,6 +66,7 @@ namespace Users.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSerilogRequestLogging();
             app.UseRouting();
 
             app.UseMiniProfiler();

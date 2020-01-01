@@ -11,7 +11,7 @@ Parameters.ProjectsToPublish.Add("Users.Migrations");
 Docker.Host = Argument("docker-host", "localhost");
 
 Task("CI")
-  .Description("Run all test")
+  .Description("Run CI Pipeline")
   .IsDependentOn("Build")
   .IsDependentOn("Test")
   .IsDependentOn("Docker Publish")

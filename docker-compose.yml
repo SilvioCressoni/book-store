@@ -19,6 +19,23 @@ services:
       CONSUL_BIND_INTERFACE: eth0
     ports:
       - 8500:8500
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.5.1
+    container_name: kibana-book-store
+    environment: 
+      ELASTICSEARCH_HOSTS: http://elastic-search:9200
+    ports: 
+      - 7000:5601
+    depends_on: 
+      - elastic-search
+  elastic-search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1
+    container_name: elastic-search-book-store
+    environment: 
+      - discovery.type=single-node
+    ports: 
+      - 7200:9200
+      - 7300:9300
   users-migrations:
     build:
       context: ./users/src
