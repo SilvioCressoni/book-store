@@ -1,3 +1,5 @@
+#addin "Cake.Docker&version=0.11.0"
+
 Task("Load Test")
   .Does(() => 
   {
@@ -28,7 +30,8 @@ Task("Unit Test")
     DotNetCoreTest(testProject, new DotNetCoreTestSettings 
     {
       NoRestore = true,
-      NoBuild = true
+      NoBuild = true,
+      ResultsDirectory = WorkDirectory.Coverage
     });
   });
 
@@ -36,7 +39,46 @@ Task("Acceptance Test")
   .Description("Run Acceptance Test")
   .IsDependentOn("Build")
   .IsDependentOn("Load Test")
-  .Does(() => {});
+  .Does(() => 
+  {
+      try
+      {
+          Information($"Docke Compose File: {string.Join(":", Docker.DockerCompose)}");
+          Information("Building Docker images...");
+          DockerComposeBuild(new DockerComposeBuildSettings   
+          {
+              Files = Docker.DockerCompose
+          });
+
+          Information("Starting Docker images...");
+          DockerComposeStart(new DockerComposeSettings  
+          {
+              Files = Docker.DockerCompose
+          });
+
+          System.Threading.Thread.Sleep(3_000);
+
+          foreach(var project in Parameters.AcceptanceTestsProjects)
+          {
+              DotNetCoreTest(project, new DotNetCoreTestSettings 
+              {
+                  EnvironmentVariables = new Dictionary<string, string>
+                  {
+                      ["Host"] = $"{Docker.Host}:5100"
+                  },
+                  NoRestore = true,
+                  NoBuild = true
+              });
+          }
+      }
+      finally
+      {
+          DockerComposeDown(new DockerComposeDownSettings 
+          {
+              Files = Docker.DockerCompose
+          });
+      }
+  });
 
 Task("Test")
   .Description("Run all test(Unit + Acceptance)")

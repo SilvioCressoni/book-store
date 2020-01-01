@@ -20,7 +20,9 @@ services:
     ports:
       - 8500:8500
   users-migrations:
-    build: ./users/src/Users.Migrations
+    build:
+      context: ./users/src
+      dockerfile: ./Users.Migrations/Dockerfile
     container_name: users-migrations-book-store
     environment:
       ConnectionString: "Server=postgres;Database=bookstoreuser;User Id=postgres;Password=BookStore@123;"

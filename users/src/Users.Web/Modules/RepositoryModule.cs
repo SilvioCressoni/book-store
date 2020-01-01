@@ -21,12 +21,12 @@ namespace Users.Web.Modules
                         var configure = provider.Resolve<IConfiguration>();
                         var connection = configure.GetConnectionString("Postgres");
 
-                        var builder = new NpgsqlConnectionStringBuilder(connection)
+                        var connectionStringBuilder = new NpgsqlConnectionStringBuilder(connection)
                         {
                             ApplicationName = "BookStoreUser"
                         };
 
-                        return PostgreSQLConfiguration.PostgreSQL82.ConnectionString(builder.ToString());
+                        return PostgreSQLConfiguration.PostgreSQL82.ConnectionString(connectionStringBuilder.ToString());
                     })
                     .Mappings(m => m.FluentMappings
                         .Add<PhoneMap>()

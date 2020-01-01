@@ -1,24 +1,20 @@
 #load "variable.cake"
+#load "docker.cake"
 #load "build.cake"
 #load "test.cake"
-#load "docker.cake"
-
 
 var target = Argument("target", "Build");
 
 Parameters.ProjectsToPublish.Add("Users.Web");
 Parameters.ProjectsToPublish.Add("Users.Migrations");
 
+Docker.Host = Argument("docker-host", "localhost");
 
-Task("Publish")
-  .Description("Publish Project")
+Task("CI")
+  .Description("Run all test")
+  .IsDependentOn("Build")
   .IsDependentOn("Test")
-  .DoesForEach(() => Parameters.ProjectsToPublish, project =>
-  {
-      DotNetCorePublish($"{WorkDirectory.Source}/{project}", new DotNetCorePublishSettings 
-      {
-          OutputDirectory = $"{WorkDirectory.Publish}/{project}"
-      });
-  });
+  .IsDependentOn("Docker Publish")
+  .Does(() => { });
 
 RunTarget(target);
