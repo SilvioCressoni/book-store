@@ -58,6 +58,7 @@ services:
        ASPNETCORE_ENVIRONMENT: "Development"
        ConnectionStrings__Postgres: "Server=postgres;Database=bookstoreuser;User Id=postgres;Password=BookStore@123;"
        Consul__Host: "consul"
+       Serilog__WriteTo__1__Args__nodeUris: http://elastic-search:9200
     volumes:
       - "users-volume:/var/output"
     ports:
