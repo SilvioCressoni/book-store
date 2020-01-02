@@ -53,7 +53,7 @@ services:
       context: ./users/src
       dockerfile: ./Users.Web/Dockerfile
     container_name: users-book-store
-    entrypoint: /bin/sh -c "dockerize -wait file:///var/output/migrator.txt && dockerize -wait tcp://consul:8500 && dotnet /app/Users.Web.dll"
+    entrypoint: /bin/sh -c "dockerize -wait file:///var/output/migrator.txt -timeout 100s && dockerize -wait tcp://consul:8500  -timeout 100s && dockerize -wait tcp://elastic-search:9200 -timeout 100s && dotnet /app/Users.Web.dll"
     environment:
        ASPNETCORE_ENVIRONMENT: "Development"
        ConnectionStrings__Postgres: "Server=postgres;Database=bookstoreuser;User Id=postgres;Password=BookStore@123;"
@@ -66,3 +66,4 @@ services:
       - postgres
       - users-migrations
       - consul
+      - elastic-search
