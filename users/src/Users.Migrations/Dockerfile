@@ -10,7 +10,7 @@ RUN dotnet publish -c Release -o out --no-restore
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine
 WORKDIR /app
 COPY --from=build-env /app/out .
-COPY .//Users.Migrations/docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./Users.Migrations/docker-entrypoint.sh /docker-entrypoint.sh
 
 ENV DOTNET_RUNNING_IN_CONTAINER=true
 ENTRYPOINT ["sh"]
