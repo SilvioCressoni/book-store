@@ -64,6 +64,7 @@ services:
        ASPNETCORE_ENVIRONMENT: "Development"
        ConnectionStrings__Postgres: "Server=postgres;Database=bookstoreuser;User Id=postgres;Password=BookStore@123;"
        Consul__Host: "consul"
+       Consult__Discovery__Hostname: "users"
        Serilog__WriteTo__1__Args__nodeUris: http://elastic-search:9200
     volumes:
       - "users-volume:/var/output"
@@ -72,5 +73,22 @@ services:
     depends_on:
       - postgres
       - users-migrations
+      - consul
+      - elastic-search
+  gateway-admin:
+    build: 
+      context: ./gateway/src
+      dockerfile: ./Gateway.API.Admin.Web/Dockerfile
+    container_name: gateway-admin-book-store
+    entrypoint: /bin/sh -c "dockerize -wait tcp://consul:8500 -timeout 100s && dockerize -wait tcp://elastic-search:9200 -timeout 100s && dotnet /app/Gateway.API.Admin.Web.dll"
+    environment:
+        ASPNETCORE_ENVIRONMENT: "Development"
+        Consul__Host: "consul"
+        Consult__Discovery__Hostname: "gateway-admin"
+        Serilog__WriteTo__1__Args__nodeUris: http://elastic-search:9200
+        Services__0__Address: http://users/
+    ports:
+      - '5101:5101'
+    depends_on:
       - consul
       - elastic-search

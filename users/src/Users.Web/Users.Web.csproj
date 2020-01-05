@@ -30,8 +30,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Protobuf Include="../../../proto/user.proto" Link="Proto/user.proto" GrpcServices="Server" />
-    <Protobuf Include="Protos\health.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos/user.proto" Link="Proto/user.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos/health.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>
