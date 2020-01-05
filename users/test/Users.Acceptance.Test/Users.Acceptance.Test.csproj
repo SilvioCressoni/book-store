@@ -26,7 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="../../src/Users.Web/Protos/user.proto" Link="Proto/user.proto" GrpcServices="Client" />
+     <Protobuf Include="../../../proto/user.proto" Link="Proto/user.proto" GrpcServices="Client" />
     </ItemGroup>
 
     <ItemGroup>

@@ -28,9 +28,9 @@
     <ProjectReference Include="..\Users.Domain\Users.Domain.csproj" />
     <ProjectReference Include="..\Users.Infrastructure\Users.Infrastructure.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <Protobuf Include="Protos\user.proto" GrpcServices="Server" />
+    <Protobuf Include="../../../proto/user.proto" Link="Proto/user.proto" GrpcServices="Server" />
     <Protobuf Include="Protos\health.proto" GrpcServices="Server" />
   </ItemGroup>
 

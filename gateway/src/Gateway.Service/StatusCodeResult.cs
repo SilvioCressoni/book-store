@@ -2,38 +2,43 @@
 
 namespace Gateway.Service
 {
-    public class StatusCodeResult
+    public interface IStatusCodeResult
     {
-        public StatusCodeResult(HttpStatusCode statusCode)
-        {
-            StatusCode = statusCode;
-            Value = null;
-        }
+        HttpStatusCode StatusCode { get; }
+        object Value { get; }
+        
+        public static IStatusCodeResult Ok<T>(T value)
+            => new StatusCodeResult<T>(HttpStatusCode.OK, value);
+        
+        public static IStatusCodeResult NoContent()
+            => new StatusCodeResult<object>(HttpStatusCode.NoContent, default);
+        
+        public static IStatusCodeResult UnprocessableEntity<T>(T value)
+            => new StatusCodeResult<T>(HttpStatusCode.UnprocessableEntity, value);
+        
+        public static IStatusCodeResult BadRequest<T>(T value)
+            => new StatusCodeResult<T>(HttpStatusCode.BadRequest, value);
+        
+        public static IStatusCodeResult NotFound<T>(T value)
+            => new StatusCodeResult<T>(HttpStatusCode.NotFound, value);
+    }
+    
+    public interface IStatusCodeResult<T> : IStatusCodeResult
+    {
+        new T Value { get; }
+        object IStatusCodeResult.Value => Value;
+    }
+    
+    public class StatusCodeResult<T> : IStatusCodeResult<T>
+    {
+        public StatusCodeResult(HttpStatusCode statusCode, T value)
 
-        public StatusCodeResult(HttpStatusCode statusCode, object value)
         {
             StatusCode = statusCode;
             Value = value;
         }
 
         public HttpStatusCode StatusCode { get; }
-        public object Value { get; }
-    }
-
-    public class StatusCodeResult<T> : StatusCodeResult
-    {
-        public StatusCodeResult(HttpStatusCode statusCode)
-            : base(statusCode)
-        {
-            Value = default;
-        }
-
-        public StatusCodeResult(HttpStatusCode statusCode, T value)
-            : base(statusCode, value)
-        {
-            Value = value;
-        }
-
-        public new T Value { get; }
+        public T Value { get; }
     }
 }
