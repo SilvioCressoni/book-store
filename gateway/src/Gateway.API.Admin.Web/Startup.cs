@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Gateway.API.Admin.Web.Enrich;
 using Gateway.API.Admin.Web.Interceptors;
 using Gateway.API.Admin.Web.Modules;
 using Grpc.Core;
@@ -92,6 +93,11 @@ namespace Gateway.API.Admin.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSerilogRequestLogging(opt =>
+            {
+                opt.EnrichDiagnosticContext = EnrichFrom.EnrichFromRequest;
+            });
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -100,8 +106,6 @@ namespace Gateway.API.Admin.Web
             {
                 app.UseHttpsRedirection();
             }
-
-            app.UseSerilogRequestLogging();
 
             app.UseRouting();
             app.UseAuthorization();
