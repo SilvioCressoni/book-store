@@ -1,32 +1,36 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Gateway.API.Admin.Web.Contracts.Request
+namespace Gateway.API.Admin.Web.Contracts.Response
 {
-    public class AddUserRequest
+    public class User
     {
+        /// <summary>
+        /// User Id
+        /// </summary>
+        public Guid Id { get; set; }
+        
         /// <summary>
         /// E-mail
         /// </summary>
-        [Required]
         public string Email { get; set; }
         
         /// <summary>
         /// First Name
         /// </summary>
-        [Required]
         public string FirstName { get; set; }
         
         /// <summary>
         /// Last Names
         /// </summary>
-        [Required]
         public string LastNames { get; set; }
         
         /// <summary>
         /// Birth date
         /// </summary>
-        [Required]
         public DateTime BirthDate { get; set; }
+        
+        public IEnumerable<Phone> Phones { get; set; }
     }
 }

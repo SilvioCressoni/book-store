@@ -62,7 +62,7 @@ namespace Gateway.Service
                 .ConfigureAwait(false);
 
             _logger.LogInformation(result.ToString());
-            return Map(result);
+            return Map(result, HttpStatusCode.Created);
         }
         
         public async Task<IStatusCodeResult> UpdateUserAsync(string id, string firstName, 

@@ -15,6 +15,5 @@ namespace Gateway.API.Admin.Web.Controllers
 
             return StatusCode((int)statusCode, value);
         }
-        
     }
 }
