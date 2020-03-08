@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Publisher.Application.Operations;
+using Publisher.Domain;
+using Publisher.Infrastructure.Repositories;
 
 namespace Publisher.Web
 {
@@ -26,7 +29,27 @@ namespace Publisher.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSwaggerDocument(config =>
+            {
+                config.PostProcess = document =>
+                {
+                    document.Info.Version = "v1";
+                    document.Info.Title = "Publisher APIs";
+                    document.Info.Description = "Microservice";
+
+
+                };
+
+            });
+
+            services.AddSingleton<IPublisherRepository, PublisherRepositoryInMemory>();
+
+            services.AddScoped<PublisherGetByIdOperation>();
+            services.AddScoped<PublisherDomain>();
+            services.AddScoped<PublisherAddOperation>();
+
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,6 +64,10 @@ namespace Publisher.Web
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseOpenApi();
+
+            app.UseSwaggerUi3();
 
             app.UseEndpoints(endpoints =>
             {

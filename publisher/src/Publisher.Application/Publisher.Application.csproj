@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Contracts\" />
+    <Folder Include="Contracts\Request\" />
+    <Folder Include="Operations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Publisher.Infrastructure\Publisher.Infrastructure.csproj" />
+    <ProjectReference Include="..\Publisher.Domain.Common\Publisher.Domain.Common.csproj" />
+    <ProjectReference Include="..\Publisher.Domain\Publisher.Domain.csproj" />
+  </ItemGroup>
+</Project>
